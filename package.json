@@ -1,0 +1,25 @@
+{
+  "name": "react-ai-reviewer",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Authority-source based React PR review bot powered by the OpenAI Responses API.",
+  "type": "module",
+  "scripts": {
+    "ai-review": "tsx src/review.ts",
+    "ai-review:local": "tsx src/review.ts --diff ./pr.diff --no-post --out ./ai-review-result.md",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@octokit/rest": "^21.1.1",
+    "openai": "^6.0.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "tsx": "^4.20.0",
+    "typescript": "^5.8.3",
+    "@types/node": "^22.15.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
