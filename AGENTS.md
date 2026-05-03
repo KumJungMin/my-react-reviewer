@@ -23,6 +23,7 @@ This repository is a GitHub Actions based React PR review bot. Treat this file a
 - `docs/security.md`: GitHub Actions, fork PR, secret, and token handling policy.
 - `docs/source-basis.md`: authority hierarchy and source links.
 - `docs/target-project-context.md`: how target projects should provide compact repo knowledge.
+- `docs/vscode-codex.md`: how Codex should run local reviews from VSCode.
 - `prompts/`: source-specific reviewer instructions.
 - `src/reviewers.ts`: reviewer registry.
 - `src/schemas.ts`: structured output schemas.

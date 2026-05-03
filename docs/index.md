@@ -11,6 +11,7 @@
 - `operation.md`: 운영 방식, 수동 재리뷰, 토큰 낭비 방지 조건.
 - `source-basis.md`: 리뷰 판단에 사용하는 권위 자료와 링크.
 - `target-project-context.md`: 리뷰 대상 프로젝트가 제공하면 좋은 compact context 작성법.
+- `vscode-codex.md`: VSCode에서 Codex에게 로컬 리뷰 실행을 맡기는 방법.
 
 ## 컨텍스트 원칙
 

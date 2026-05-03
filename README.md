@@ -87,6 +87,19 @@ npm run ai-review -- --diff ./pr.diff --no-post --out ./ai-review-result.md
 npm run ai-review -- --diff ./pr.diff --no-post --reviewers react-official,react-hooks-eslint,toss
 ```
 
+## VSCode에서 실행
+
+VSCode 안의 Codex에게 실행을 맡기려면 다음처럼 요청합니다.
+
+```text
+AGENTS.md와 docs/vscode-codex.md를 읽고 React AI Reviewer를 로컬에서 실행해줘.
+OPENAI_API_KEY는 이미 환경 변수로 준비되어 있다고 가정하고, secret 값은 출력하지 마.
+origin/main...HEAD 기준으로 pr.diff를 만든 뒤 --no-post로 리뷰를 실행해줘.
+실행 전 npm run typecheck를 먼저 돌리고, 결과는 ai-review-result.md에 남겨줘.
+```
+
+자세한 Codex용 절차와 변형 명령은 `docs/vscode-codex.md`에 있습니다.
+
 ## GitHub Actions 설정
 
 1. 이 프로젝트 파일들을 리뷰 대상 저장소 루트에 복사합니다.
