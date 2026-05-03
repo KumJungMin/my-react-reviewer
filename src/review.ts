@@ -1,9 +1,15 @@
 import fs from "node:fs";
 import path from "node:path";
 import { parseArgs, getStringFlag } from "./cli.js";
-import { getRuntimeConfig } from "./config.js";
+import { getRequiredOpenAIApiKey, getRuntimeConfig } from "./config.js";
 import { collectRepositoryContext, formatRepositoryContext } from "./context.js";
-import { createOctokit, fetchPullRequestDiff, getPullRequestContextFromEnv, upsertPullRequestComment } from "./github.js";
+import {
+  createOctokit,
+  fetchPullRequestDiff,
+  getPullRequestContextFromEnv,
+  shouldRunGitHubReviewFromEnv,
+  upsertPullRequestComment,
+} from "./github.js";
 import { normalizeFinalMarkdown, noFilesMarkdown, REVIEW_COMMENT_MARKER } from "./markdown.js";
 import { createOpenAIClient, runFinalReviewer, runSingleReviewer } from "./openaiReview.js";
 import { selectReviewers } from "./reviewers.js";
@@ -53,6 +59,16 @@ async function loadDiff(params: {
 
 async function main(): Promise<void> {
   const { flags } = parseArgs(process.argv.slice(2));
+  const diffPath = getStringFlag(flags, "diff");
+
+  if (!diffPath) {
+    const runDecision = shouldRunGitHubReviewFromEnv();
+    if (!runDecision.shouldRun) {
+      console.log(runDecision.reason);
+      return;
+    }
+  }
+
   const config = getRuntimeConfig(flags);
   const reviewers = selectReviewers(config.selectedReviewerIds);
 
@@ -78,8 +94,12 @@ async function main(): Promise<void> {
     return;
   }
 
-  const repositoryContext = formatRepositoryContext(collectRepositoryContext());
-  const client = createOpenAIClient(config.openaiApiKey);
+  const repositoryContext = formatRepositoryContext(
+    collectRepositoryContext({
+      maxTotalChars: config.maxContextChars,
+    }),
+  );
+  const client = createOpenAIClient(getRequiredOpenAIApiKey());
   const reviewInput = { diff, repositoryContext };
   const reviewerResults = [];
 

@@ -1,0 +1,82 @@
+name: React AI Review
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review]
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "PR number to review"
+        required: true
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: write
+
+concurrency:
+  group: react-ai-review-${{ github.event.pull_request.number || github.event.issue.number || inputs.pr_number || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    name: Review PR diff
+    if: >
+      (
+        github.event_name == 'pull_request_target' &&
+        github.event.pull_request.draft == false
+      ) ||
+      (
+        github.event_name == 'issue_comment' &&
+        github.event.issue.pull_request &&
+        (
+          github.event.comment.body == '/ai-review' ||
+          startsWith(github.event.comment.body, '/ai-review ') ||
+          startsWith(github.event.comment.body, '/ai-review\n')
+        ) &&
+        contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association)
+      ) ||
+      github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      OPENAI_MODEL: ${{ vars.OPENAI_MODEL || 'gpt-5.4' }}
+      MAX_DIFF_CHARS: ${{ vars.MAX_DIFF_CHARS || '120000' }}
+      MAX_CONTEXT_CHARS: ${{ vars.MAX_CONTEXT_CHARS || '30000' }}
+      REVIEWERS: ${{ vars.REVIEWERS }}
+      POST_COMMENT: "true"
+
+    steps:
+      - name: Checkout trusted reviewer code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha || github.sha }}
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install reviewer dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Typecheck reviewer
+        run: npm run typecheck
+
+      - name: Run React AI review
+        run: npm run ai-review
+
+      - name: Upload review result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: react-ai-reviewer-result
+          path: |
+            .react-ai-reviewer/result.md
+            .react-ai-reviewer/raw-reviewer-results.json
+            .react-ai-reviewer/final-review.json
+          if-no-files-found: ignore

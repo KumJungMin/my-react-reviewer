@@ -1,7 +1,7 @@
 export type RuntimeConfig = {
-  openaiApiKey: string;
   openaiModel: string;
   maxDiffChars: number;
+  maxContextChars: number;
   postComment: boolean;
   selectedReviewerIds: string[] | null;
   outputPath: string;
@@ -24,19 +24,14 @@ function parseInteger(value: string | undefined, fallback: number): number {
 }
 
 export function getRuntimeConfig(args: Map<string, string | boolean>): RuntimeConfig {
-  const openaiApiKey = optionalEnv("OPENAI_API_KEY");
-  if (!openaiApiKey) {
-    throw new Error("Missing OPENAI_API_KEY. Set it as a GitHub secret or local environment variable.");
-  }
-
   const reviewersArg = args.get("reviewers");
   const reviewersEnv = optionalEnv("REVIEWERS");
   const reviewersRaw = typeof reviewersArg === "string" ? reviewersArg : reviewersEnv;
 
   return {
-    openaiApiKey,
     openaiModel: optionalEnv("OPENAI_MODEL") ?? "gpt-5.4",
     maxDiffChars: parseInteger(optionalEnv("MAX_DIFF_CHARS"), 120_000),
+    maxContextChars: parseInteger(optionalEnv("MAX_CONTEXT_CHARS"), 30_000),
     postComment: parseBoolean(optionalEnv("POST_COMMENT"), true) && args.get("no-post") !== true,
     selectedReviewerIds: reviewersRaw
       ? reviewersRaw
@@ -46,4 +41,13 @@ export function getRuntimeConfig(args: Map<string, string | boolean>): RuntimeCo
       : null,
     outputPath: typeof args.get("out") === "string" ? (args.get("out") as string) : ".react-ai-reviewer/result.md",
   };
+}
+
+export function getRequiredOpenAIApiKey(): string {
+  const openaiApiKey = optionalEnv("OPENAI_API_KEY");
+  if (!openaiApiKey) {
+    throw new Error("Missing OPENAI_API_KEY. Set it as a GitHub secret or local environment variable.");
+  }
+
+  return openaiApiKey;
 }
