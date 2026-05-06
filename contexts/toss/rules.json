@@ -1,0 +1,25 @@
+{
+  "focus": [
+    "cohesion",
+    "single responsibility in practice",
+    "consistent abstraction level",
+    "change cost"
+  ],
+  "ignore": [
+    "file splitting for its own sake",
+    "style or naming-only comments",
+    "repo-wide redesign requests"
+  ],
+  "severityHints": {
+    "critical": [],
+    "high": [
+      "business rule changes will require multiple scattered edits in risky code paths"
+    ],
+    "medium": [
+      "responsibilities are mixed and future changes will spread"
+    ],
+    "low": [
+      "cleanup idea improves readability but the current risk is limited"
+    ]
+  }
+}

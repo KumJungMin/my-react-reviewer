@@ -1,35 +1,56 @@
 # Architecture
 
-React AI Reviewer는 PR diff를 여러 권위 기준으로 독립 리뷰한 뒤, 최종 리뷰어가 결과를 병합하는 구조다.
+React AI Reviewer는 diff를 여러 권위 기준으로 독립 리뷰하되, 실행 전 selector가 관련 있는 리뷰어만 고르는 구조다.
 
 ```text
 PR diff / local diff
-  -> repository context
+  -> changed file parsing
+  -> reviewer selection
+  -> prompt/context/rules load
   -> source-based reviewers
-  -> final reviewer
+  -> normalized reviewer JSON
+  -> final reviewer editor
   -> markdown result
   -> PR comment upsert / local output
 ```
 
 ## Module Responsibilities
 
-- `src/review.ts`: CLI entrypoint. 실행 조건 확인, diff/context 수집, reviewer 순차 실행, 결과 파일 작성, PR 댓글 게시를 담당한다.
-- `src/github.ts`: GitHub event 해석, PR 번호 추출, reviewable file patch 수집, PR 댓글 upsert를 담당한다.
-- `src/context.ts`: 리뷰 대상 프로젝트의 정적 context를 allowlist 기반으로 수집한다.
-- `src/config.ts`: 환경 변수와 CLI flag를 runtime config로 변환한다.
-- `src/reviewers.ts`: reviewer id, title, source basis, prompt file 연결을 관리한다.
-- `src/openaiReview.ts`: OpenAI Responses API 호출과 structured output parsing을 담당한다.
-- `src/schemas.ts`: reviewer result와 final review result의 Zod schema를 정의한다.
-- `src/markdown.ts`: 최종 Markdown marker와 no-diff fallback 문구를 관리한다.
-- `prompts/*.md`: 각 권위 자료별 reviewer의 행동 기준이다.
+- `src/review.ts`: CLI entrypoint. diff 로드, reviewer selection, source reviewer 실행, final reviewer 실행, 결과 파일 작성, PR 댓글 게시를 담당한다.
+- `src/diff.ts`: local diff에서 changed file을 추출하고 reviewable file 판정을 담당한다.
+- `src/github.ts`: GitHub event 해석, PR file patch 수집, reviewable changed file 목록 구성, PR 댓글 upsert를 담당한다.
+- `src/context.ts`: 리뷰 대상 프로젝트의 정적 repository context를 allowlist 기반으로 수집한다.
+- `src/reviewers.ts`: `reviewers.config.json` 로드, reviewer asset 로드, selector, fallback reviewer 정책을 담당한다.
+- `src/openaiReview.ts`: OpenAI Responses API structured output 호출과 reviewer/final reviewer 입력 구성을 담당한다.
+- `src/schemas.ts`: normalized reviewer result와 final review result schema를 정의한다.
+- `reviewers.config.json`: reviewer 메타데이터, order, enabled, trigger, fallback 구성을 담는다.
+- `prompts/*.md`: reviewer 역할, 출력 방식, severity 기준, ignore 규칙을 담는다.
+- `contexts/*/compressed.md`: 모델에 주입할 압축 source knowledge를 담는다.
+- `contexts/*/rules.json`: focus, ignore, severity hint를 담는다.
+- `contexts/*/source.md`: 사람이 보는 source 요약을 담는다.
 
 ## Execution Rules
 
 - source-based reviewer는 서로의 결과를 보지 않는다.
-- final reviewer만 중복 제거, severity 조정, source trace 병합을 수행한다.
-- diff 또는 repository context에 근거 없는 finding은 제거한다.
+- reviewer selection은 file pattern과 diff keyword로만 동작한다.
+- `final-reviewer`만 여러 reviewer result를 함께 본다.
+- final reviewer는 dedupe, severity adjustment, low-confidence pruning, Markdown generation만 담당한다.
+- diff 또는 repository context에 근거가 없는 comment는 source reviewer 단계와 final reviewer 단계 모두에서 제거 대상이다.
 - reviewable diff가 없으면 OpenAI를 호출하지 않는다.
-- repository context는 allowlist와 `MAX_CONTEXT_CHARS`로 제한한다.
+
+## Selection Rules
+
+- disabled reviewer는 실행하지 않는다.
+- file pattern 또는 keyword가 매치되면 reviewer를 선택한다.
+- 자동 선택 결과가 비면 fallback으로 `react-official`, `clean-code-design`, `final-reviewer`를 실행한다.
+- `--reviewers` 또는 `REVIEWERS`를 주면 지정 reviewer만 실행하되 `final-reviewer`는 자동으로 포함한다.
+
+## Output Artifacts
+
+- `.react-ai-reviewer/reviewer-selection.json`: changed files와 선택된 reviewer id를 기록한다.
+- `.react-ai-reviewer/raw-reviewer-results.json`: source reviewer normalized JSON 결과를 저장한다.
+- `.react-ai-reviewer/final-review.json`: final reviewer structured output을 저장한다.
+- `.react-ai-reviewer/result.md`: 최종 GitHub-friendly Markdown을 저장한다.
 
 ## Context Collection
 

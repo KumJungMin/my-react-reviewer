@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import { Octokit } from "@octokit/rest";
+import { isReviewableFilePath } from "./diff.js";
 import { truncateMiddle } from "./text.js";
 
 export type PullRequestContext = {
@@ -11,6 +12,7 @@ export type PullRequestContext = {
 export type PullRequestDiffResult = {
   diff: string;
   fileCount: number;
+  changedFiles: string[];
 };
 
 export type ReviewRunDecision = {
@@ -133,19 +135,9 @@ export async function fetchPullRequestDiff(params: {
     per_page: 100,
   });
 
-  const reviewableFiles = files.filter((file) => {
-    const isReviewableExtension = /\.(tsx|ts|jsx|js)$/.test(file.filename);
-    const isRelevantConfig = /(^|\/)(package\.json|tsconfig\.json|eslint\.config\..*|\.eslintrc.*|vite\.config\..*|next\.config\..*)$/.test(
-      file.filename,
-    );
-    const isIgnored =
-      file.filename.includes("node_modules/") ||
-      file.filename.endsWith(".snap") ||
-      file.filename.endsWith(".lock") ||
-      file.status === "removed";
-
-    return !isIgnored && Boolean(file.patch) && (isReviewableExtension || isRelevantConfig);
-  });
+  const reviewableFiles = files.filter(
+    (file) => file.status !== "removed" && Boolean(file.patch) && isReviewableFilePath(file.filename),
+  );
 
   const diff = reviewableFiles
     .map((file) => {
@@ -163,6 +155,7 @@ export async function fetchPullRequestDiff(params: {
   return {
     diff: truncateMiddle(diff, maxChars),
     fileCount: reviewableFiles.length,
+    changedFiles: reviewableFiles.map((file) => file.filename),
   };
 }
 

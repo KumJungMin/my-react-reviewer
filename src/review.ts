@@ -3,6 +3,7 @@ import path from "node:path";
 import { parseArgs, getStringFlag } from "./cli.js";
 import { getRequiredOpenAIApiKey, getRuntimeConfig } from "./config.js";
 import { collectRepositoryContext, formatRepositoryContext } from "./context.js";
+import { extractChangedFilesFromDiff } from "./diff.js";
 import {
   createOctokit,
   fetchPullRequestDiff,
@@ -12,7 +13,7 @@ import {
 } from "./github.js";
 import { normalizeFinalMarkdown, noFilesMarkdown, REVIEW_COMMENT_MARKER } from "./markdown.js";
 import { createOpenAIClient, runFinalReviewer, runSingleReviewer } from "./openaiReview.js";
-import { selectReviewers } from "./reviewers.js";
+import { getAllReviewers, getSourceReviewers, selectReviewers, selectReviewersByIds } from "./reviewers.js";
 import { asJson, truncateMiddle } from "./text.js";
 
 function ensureParentDir(filePath: string): void {
@@ -31,6 +32,7 @@ async function loadDiff(params: {
 }): Promise<{
   diff: string;
   fileCount: number;
+  changedFiles: string[];
   githubContext: ReturnType<typeof getPullRequestContextFromEnv> | null;
   octokit: ReturnType<typeof createOctokit> | null;
 }> {
@@ -38,9 +40,11 @@ async function loadDiff(params: {
 
   if (diffPath) {
     const rawDiff = fs.readFileSync(diffPath, "utf8");
+    const changedFiles = extractChangedFilesFromDiff(rawDiff);
     return {
       diff: truncateMiddle(rawDiff, params.maxDiffChars),
-      fileCount: rawDiff.trim().length > 0 ? 1 : 0,
+      fileCount: changedFiles.length,
+      changedFiles,
       githubContext: null,
       octokit: null,
     };
@@ -48,13 +52,13 @@ async function loadDiff(params: {
 
   const githubContext = getPullRequestContextFromEnv();
   const octokit = createOctokit();
-  const { diff, fileCount } = await fetchPullRequestDiff({
+  const { diff, fileCount, changedFiles } = await fetchPullRequestDiff({
     octokit,
     context: githubContext,
     maxChars: params.maxDiffChars,
   });
 
-  return { diff, fileCount, githubContext, octokit };
+  return { diff, fileCount, changedFiles, githubContext, octokit };
 }
 
 async function main(): Promise<void> {
@@ -70,9 +74,8 @@ async function main(): Promise<void> {
   }
 
   const config = getRuntimeConfig(flags);
-  const reviewers = selectReviewers(config.selectedReviewerIds);
 
-  const { diff, fileCount, githubContext, octokit } = await loadDiff({
+  const { diff, fileCount, changedFiles, githubContext, octokit } = await loadDiff({
     flags,
     maxDiffChars: config.maxDiffChars,
   });
@@ -99,13 +102,30 @@ async function main(): Promise<void> {
       maxTotalChars: config.maxContextChars,
     }),
   );
+  const allReviewers = getAllReviewers();
+  const selectedReviewers = config.selectedReviewerIds
+    ? selectReviewersByIds(config.selectedReviewerIds, allReviewers)
+    : selectReviewers({
+        diff,
+        changedFiles,
+        reviewers: allReviewers,
+      });
+  const sourceReviewers = getSourceReviewers(selectedReviewers);
   const client = createOpenAIClient(getRequiredOpenAIApiKey());
-  const reviewInput = { diff, repositoryContext };
+  const reviewInput = { diff, changedFiles, repositoryContext };
   const reviewerResults = [];
 
-  console.log(`Running ${reviewers.length} source-based reviewer(s) with model ${config.openaiModel}...`);
+  writeText(
+    ".react-ai-reviewer/reviewer-selection.json",
+    asJson({
+      changedFiles,
+      selectedReviewerIds: selectedReviewers.map((reviewer) => reviewer.id),
+    }),
+  );
 
-  for (const reviewer of reviewers) {
+  console.log(`Running ${sourceReviewers.length} source-based reviewer(s) with model ${config.openaiModel}...`);
+
+  for (const reviewer of sourceReviewers) {
     console.log(`- ${reviewer.id}: ${reviewer.title}`);
     const result = await runSingleReviewer({
       client,

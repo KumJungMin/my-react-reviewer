@@ -1,0 +1,29 @@
+{
+  "focus": [
+    "render purity",
+    "rules of hooks",
+    "effect synchronization",
+    "state source of truth"
+  ],
+  "ignore": [
+    "naming or style preferences",
+    "folder structure opinions",
+    "micro-optimization advice"
+  ],
+  "severityHints": {
+    "critical": [
+      "hook rule violation",
+      "render-time side effect with clear runtime failure risk"
+    ],
+    "high": [
+      "stale or contradictory state that can reach users",
+      "effect structure that can cause broken synchronization"
+    ],
+    "medium": [
+      "state modeling likely to regress on future updates"
+    ],
+    "low": [
+      "react correctness concern with limited impact or low certainty"
+    ]
+  }
+}

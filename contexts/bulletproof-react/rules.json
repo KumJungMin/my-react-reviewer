@@ -1,0 +1,24 @@
+{
+  "focus": [
+    "feature boundary",
+    "shared module hygiene",
+    "unidirectional dependency direction",
+    "api-domain-ui separation"
+  ],
+  "ignore": [
+    "folder-name dogma",
+    "large-scale architecture rewrites for small diffs"
+  ],
+  "severityHints": {
+    "critical": [],
+    "high": [
+      "the diff creates direct cross-feature coupling or major shared-layer leakage"
+    ],
+    "medium": [
+      "the boundary choice will make related changes harder to isolate"
+    ],
+    "low": [
+      "the structure could be cleaner but current impact is limited"
+    ]
+  }
+}

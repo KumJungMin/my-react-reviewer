@@ -1,96 +1,187 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { z } from "zod";
 
-export type ReviewerDefinition = {
-  id: string;
-  title: string;
-  sourceBasis: string;
-  promptFile: string;
+const ReviewerTriggerSchema = z.object({
+  filePatterns: z.array(z.string()),
+  keywords: z.array(z.string()),
+});
+
+const ReviewerConfigSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  sourceBasis: z.string(),
+  promptPath: z.string(),
+  contextPath: z.string(),
+  rulesPath: z.string(),
+  order: z.number().int(),
+  enabled: z.boolean(),
+  type: z.enum(["source", "final"]),
+  excludeFilePatterns: z.array(z.string()).default([]),
+  triggers: ReviewerTriggerSchema,
+});
+
+const ReviewerCatalogSchema = z.object({
+  fallbackReviewerIds: z.array(z.string()).min(1),
+  reviewers: z.array(ReviewerConfigSchema),
+});
+
+export type ReviewerConfig = z.infer<typeof ReviewerConfigSchema>;
+export type ReviewerCatalog = z.infer<typeof ReviewerCatalogSchema>;
+export type ReviewerAssets = {
+  prompt: string;
+  context: string;
+  rules: string;
+};
+
+export type SelectReviewersInput = {
+  diff: string;
+  changedFiles: string[];
+  reviewers: ReviewerConfig[];
+  fallbackReviewerIds?: string[];
 };
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, "..");
 
-export const reviewerDefinitions: ReviewerDefinition[] = [
-  {
-    id: "react-official",
-    title: "React 공식 문서 리뷰어",
-    sourceBasis:
-      "React 공식 문서: Rules of React, Components and Hooks must be pure, Rules of Hooks, useEffect, You Might Not Need an Effect, state structure",
-    promptFile: "01-react-official.md",
-  },
-  {
-    id: "react-hooks-eslint",
-    title: "React Hooks / ESLint 리뷰어",
-    sourceBasis:
-      "React 공식 eslint-plugin-react-hooks: rules-of-hooks, exhaustive-deps, immutability, set-state-in-render, purity",
-    promptFile: "02-react-hooks-eslint.md",
-  },
-  {
-    id: "dan-abramov",
-    title: "Dan Abramov Resilient Components 리뷰어",
-    sourceBasis:
-      "Dan Abramov: Writing Resilient Components, useEffect synchronization 관점. React Core 기여자의 해석 자료로 사용한다.",
-    promptFile: "03-dan-abramov.md",
-  },
-  {
-    id: "toss",
-    title: "Toss 유지보수성 리뷰어",
-    sourceBasis:
-      "Toss Frontend Fundamentals, Toss Tech, Toss SLASH: 수정하기 쉬운 코드, 응집도, 단일 책임, 추상화 레벨의 일관성",
-    promptFile: "04-toss.md",
-  },
-  {
-    id: "vercel-performance",
-    title: "Vercel 성능 리뷰어",
-    sourceBasis:
-      "Vercel React Best Practices: async waterfall, bundle size, server/client data fetching, re-render optimization",
-    promptFile: "05-vercel-performance.md",
-  },
-  {
-    id: "kent-testing",
-    title: "Kent C. Dodds 테스트 리뷰어",
-    sourceBasis:
-      "Kent C. Dodds, Testing Library: implementation details보다 사용자 행동 중심 테스트",
-    promptFile: "06-kent-testing.md",
-  },
-  {
-    id: "bulletproof-react",
-    title: "Bulletproof React 아키텍처 리뷰어",
-    sourceBasis:
-      "Bulletproof React: feature boundary, API layer, shared module, production React architecture. 공식 React 규칙은 아니므로 맥락에 맞게 적용한다.",
-    promptFile: "07-bulletproof-react.md",
-  },
-  {
-    id: "clean-code-design",
-    title: "Clean Code / SOLID 디자인 리뷰어",
-    sourceBasis:
-      "Robert C. Martin/Object Mentor SOLID 원칙, Martin Fowler Refactoring/code smells, Google Engineering Practices code health, GoF Design Patterns, cohesion/coupling 설계 원칙",
-    promptFile: "08-clean-code-design.md",
-  },
-];
-
-export function loadPrompt(promptFile: string): string {
-  const filePath = path.join(projectRoot, "prompts", promptFile);
-  return fs.readFileSync(filePath, "utf8");
+function readTextFile(relativePath: string): string {
+  return fs.readFileSync(path.join(projectRoot, relativePath), "utf8");
 }
 
-export function loadFinalReviewerPrompt(): string {
-  return loadPrompt("99-final-reviewer.md");
-}
+function loadReviewerCatalog(): ReviewerCatalog {
+  const parsed = ReviewerCatalogSchema.parse(JSON.parse(readTextFile("reviewers.config.json")));
+  const reviewerIds = new Set(parsed.reviewers.map((reviewer) => reviewer.id));
 
-export function selectReviewers(selectedIds: string[] | null): ReviewerDefinition[] {
-  if (!selectedIds || selectedIds.length === 0) return reviewerDefinitions;
-
-  const unknownIds = selectedIds.filter(
-    (id) => !reviewerDefinitions.some((reviewer) => reviewer.id === id),
-  );
-
-  if (unknownIds.length > 0) {
-    throw new Error(`Unknown reviewer id(s): ${unknownIds.join(", ")}`);
+  for (const fallbackReviewerId of parsed.fallbackReviewerIds) {
+    if (!reviewerIds.has(fallbackReviewerId)) {
+      throw new Error(`Unknown fallback reviewer id: ${fallbackReviewerId}`);
+    }
   }
 
-  return reviewerDefinitions.filter((reviewer) => selectedIds.includes(reviewer.id));
+  return parsed;
+}
+
+const reviewerCatalog = loadReviewerCatalog();
+
+function toRegexSource(pattern: string): string {
+  const doubleStarDirPlaceholder = "__DOUBLE_STAR_DIR__";
+  const doubleStarPlaceholder = "__DOUBLE_STAR__";
+  const singleStarPlaceholder = "__SINGLE_STAR__";
+  const questionPlaceholder = "__QUESTION__";
+
+  return pattern
+    .replace(/\*\*\//g, doubleStarDirPlaceholder)
+    .replace(/\*\*/g, doubleStarPlaceholder)
+    .replace(/\*/g, singleStarPlaceholder)
+    .replace(/\?/g, questionPlaceholder)
+    .replace(/[.+^${}()|[\]\\]/g, "\\$&")
+    .replaceAll(doubleStarDirPlaceholder, "(?:.*/)?")
+    .replaceAll(doubleStarPlaceholder, ".*")
+    .replaceAll(singleStarPlaceholder, "[^/]*")
+    .replaceAll(questionPlaceholder, "[^/]");
+}
+
+function matchesGlob(filePath: string, pattern: string): boolean {
+  return new RegExp(`^${toRegexSource(pattern)}$`).test(filePath);
+}
+
+function isExcludedFile(reviewer: ReviewerConfig, filePath: string): boolean {
+  return reviewer.excludeFilePatterns.some((pattern) => matchesGlob(filePath, pattern));
+}
+
+function reviewerHasEligibleChangedFile(reviewer: ReviewerConfig, changedFiles: string[]): boolean {
+  return changedFiles.some((filePath) => !isExcludedFile(reviewer, filePath));
+}
+
+function reviewerMatchesChangedFiles(reviewer: ReviewerConfig, changedFiles: string[]): boolean {
+  if (reviewer.triggers.filePatterns.length === 0) return false;
+
+  return changedFiles.some((filePath) => {
+    if (isExcludedFile(reviewer, filePath)) return false;
+    return reviewer.triggers.filePatterns.some((pattern) => matchesGlob(filePath, pattern));
+  });
+}
+
+function reviewerMatchesDiffKeywords(reviewer: ReviewerConfig, lowerCaseDiff: string): boolean {
+  if (reviewer.triggers.keywords.length === 0) return false;
+  return reviewer.triggers.keywords.some((keyword) => lowerCaseDiff.includes(keyword.toLowerCase()));
+}
+
+function sortReviewers(reviewers: ReviewerConfig[]): ReviewerConfig[] {
+  return reviewers.slice().sort((left, right) => left.order - right.order);
+}
+
+function uniqueReviewers(reviewers: ReviewerConfig[]): ReviewerConfig[] {
+  return Array.from(new Map(reviewers.map((reviewer) => [reviewer.id, reviewer])).values());
+}
+
+export function getReviewerCatalog(): ReviewerCatalog {
+  return reviewerCatalog;
+}
+
+export function getAllReviewers(): ReviewerConfig[] {
+  return sortReviewers(reviewerCatalog.reviewers);
+}
+
+export function getFinalReviewer(reviewers: ReviewerConfig[] = getAllReviewers()): ReviewerConfig {
+  const finalReviewer = reviewers.find((reviewer) => reviewer.type === "final");
+  if (!finalReviewer) {
+    throw new Error("Missing final reviewer configuration.");
+  }
+
+  return finalReviewer;
+}
+
+export function getSourceReviewers(reviewers: ReviewerConfig[] = getAllReviewers()): ReviewerConfig[] {
+  return reviewers.filter((reviewer) => reviewer.type === "source");
+}
+
+export function getReviewerById(id: string, reviewers: ReviewerConfig[] = getAllReviewers()): ReviewerConfig {
+  const reviewer = reviewers.find((candidate) => candidate.id === id);
+  if (!reviewer) {
+    throw new Error(`Unknown reviewer id: ${id}`);
+  }
+
+  return reviewer;
+}
+
+export function loadReviewerAssets(reviewer: ReviewerConfig): ReviewerAssets {
+  return {
+    prompt: readTextFile(reviewer.promptPath),
+    context: readTextFile(reviewer.contextPath),
+    rules: readTextFile(reviewer.rulesPath),
+  };
+}
+
+export function selectReviewers(input: SelectReviewersInput): ReviewerConfig[] {
+  const reviewers = sortReviewers(input.reviewers.filter((reviewer) => reviewer.enabled));
+  const finalReviewer = getFinalReviewer(reviewers);
+  const sourceReviewers = getSourceReviewers(reviewers);
+  const lowerCaseDiff = input.diff.toLowerCase();
+
+  const matchedReviewers = sourceReviewers.filter(
+    (reviewer) =>
+      reviewerMatchesChangedFiles(reviewer, input.changedFiles) ||
+      (reviewerHasEligibleChangedFile(reviewer, input.changedFiles) &&
+        reviewerMatchesDiffKeywords(reviewer, lowerCaseDiff)),
+  );
+
+  const fallbackReviewerIds = input.fallbackReviewerIds ?? reviewerCatalog.fallbackReviewerIds;
+  const selectedSourceReviewers =
+    matchedReviewers.length > 0
+      ? matchedReviewers
+      : fallbackReviewerIds
+          .map((id) => getReviewerById(id, reviewers))
+          .filter((reviewer) => reviewer.enabled && reviewer.type === "source");
+
+  return uniqueReviewers([...selectedSourceReviewers, finalReviewer]).sort((left, right) => left.order - right.order);
+}
+
+export function selectReviewersByIds(selectedIds: string[], reviewers: ReviewerConfig[] = getAllReviewers()): ReviewerConfig[] {
+  const selectedReviewers = selectedIds.map((id) => getReviewerById(id, reviewers)).filter((reviewer) => reviewer.enabled);
+  return uniqueReviewers([...selectedReviewers, getFinalReviewer(reviewers)]).sort(
+    (left, right) => left.order - right.order,
+  );
 }

@@ -24,8 +24,10 @@ This repository is a GitHub Actions based React PR review bot. Treat this file a
 - `docs/source-basis.md`: authority hierarchy and source links.
 - `docs/target-project-context.md`: how target projects should provide compact repo knowledge.
 - `docs/vscode-codex.md`: how Codex should run local reviews from VSCode.
+- `reviewers.config.json`: reviewer registry, order, triggers, fallback set.
 - `prompts/`: source-specific reviewer instructions.
-- `src/reviewers.ts`: reviewer registry.
+- `contexts/`: reviewer source summaries, compressed context, and rules.
+- `src/reviewers.ts`: reviewer config loading, asset loading, and selection logic.
 - `src/schemas.ts`: structured output schemas.
 - `src/openaiReview.ts`: OpenAI Responses API integration.
 - `src/review.ts`: main execution flow.
@@ -34,9 +36,9 @@ This repository is a GitHub Actions based React PR review bot. Treat this file a
 
 ## Common Changes
 
-- Add a reviewer: create `prompts/NN-name.md`, register it in `src/reviewers.ts`, update docs and final reviewer prompt if needed.
+- Add a reviewer: create `prompts/NN-name.md`, add `contexts/name/*`, register it in `reviewers.config.json`, update docs and final reviewer prompt if needed.
 - Change review output shape: update `src/schemas.ts`, `src/openaiReview.ts`, `src/markdown.ts`, and final reviewer prompt together.
-- Change trigger behavior: update `.github/workflows/react-ai-review.yml`, `src/github.ts`, `README.md`, and `docs/operation.md`.
+- Change trigger behavior: update `reviewers.config.json`, `src/reviewers.ts` if selector logic changes, `README.md`, and `docs/operation.md`.
 - Change context collection: update `src/context.ts` and `docs/target-project-context.md`.
 
 ## Verification
