@@ -1,0 +1,4 @@
+interface:
+  display_name: "Create Component From Figma"
+  short_description: "Implement React components from Figma with repo patterns"
+  default_prompt: "Use $create-component-from-figma to turn this Figma design or screenshot into production-ready React + TypeScript + Vanilla Extract code that matches the repository."
