@@ -1,0 +1,4 @@
+interface:
+  display_name: "테스트 코드 생성기"
+  short_description: "요구사항, 설계, 구현 코드를 바탕으로 테스트를 생성합니다"
+  default_prompt: "$test-code-generator로 구현된 React 기능의 주요 상태와 저장소 테스트 패턴에 맞는 테스트를 작성해줘."

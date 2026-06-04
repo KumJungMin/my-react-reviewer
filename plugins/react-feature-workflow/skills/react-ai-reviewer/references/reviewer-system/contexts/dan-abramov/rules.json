@@ -1,0 +1,26 @@
+{
+  "focus": [
+    "data flow integrity",
+    "render resilience",
+    "non-singleton component assumptions",
+    "effect closure safety"
+  ],
+  "ignore": [
+    "style-only opinions",
+    "broad architecture advice without a concrete failure mode"
+  ],
+  "severityHints": {
+    "critical": [
+      "hidden singleton or timing assumption can clearly break concurrent instances"
+    ],
+    "high": [
+      "prop or state updates can be lost because data flow is blocked"
+    ],
+    "medium": [
+      "effect or closure structure is likely to become stale on future changes"
+    ],
+    "low": [
+      "resilience concern is plausible but not fully proven by the diff"
+    ]
+  }
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "팀 컨벤션 검사기"
+  short_description: "프로젝트별 프론트엔드 팀 컨벤션을 검사합니다"
+  default_prompt: "$team-convention-checker로 폴더 구조, 네이밍, export, hook 경계, 상태 관리, 디자인 시스템 사용, 테스트 위치를 검사해줘."

@@ -1,0 +1,26 @@
+{
+  "focus": [
+    "rules-of-hooks",
+    "exhaustive-deps",
+    "set-state-in-effect",
+    "refs and render purity"
+  ],
+  "ignore": [
+    "memoization added for style",
+    "lint speculation without diff evidence"
+  ],
+  "severityHints": {
+    "critical": [
+      "hook call order can break across renders"
+    ],
+    "high": [
+      "stale closure or missing dependency can produce wrong behavior"
+    ],
+    "medium": [
+      "effect structure fights the dependency model and can regress easily"
+    ],
+    "low": [
+      "compiler-only optimization coverage issue with low user impact"
+    ]
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "name": "react-feature-workflow",
+  "version": "0.1.0",
+  "description": "React 기능 개발을 요구사항 분석, 디자인 분석, 설계, 구현, 컨벤션 검사, 리뷰, 테스트, 검증 순서로 안내하는 한글 워크플로우 플러그인입니다.",
+  "author": {
+    "name": "Local developer"
+  },
+  "skills": "./skills/",
+  "license": "MIT",
+  "keywords": ["codex", "react", "frontend", "workflow", "skills"],
+  "interface": {
+    "displayName": "React 기능 워크플로우",
+    "shortDescription": "첫 사용은 가이드부터. 요구사항→설계→구현→리뷰→테스트→검증 순서로 진행합니다.",
+    "longDescription": "React 기능 워크플로우는 요구사항이나 티켓을 실제 React 기능으로 구현할 때 사용하는 한글 플러그인입니다. 처음 사용하거나 '가이드'라고 입력하면 간단 사용법을 먼저 보여주고, 작업은 요구사항 분석, 디자인/Figma 분석, 아키텍처 설계, 구현, 팀 컨벤션 검사, React 코드 리뷰, 테스트 생성, 검증 순서로 진행합니다. Figma, 스크린샷, UI 설명을 코드로 옮기거나 PR 전에 컨벤션, 코드 품질, 테스트 공백을 점검할 때도 사용할 수 있습니다. 필요한 정보는 요구사항, 대상 경로, 디자인 자료, 작업 범위, 테스트 필요 여부, 검증 명령입니다. 팀 규칙은 대상 프로젝트의 .codex/react-feature-workflow/*.md 파일로 커스터마이징할 수 있으며, 모든 안내와 응답은 기본적으로 한글로 작성합니다.",
+    "developerName": "Local developer",
+    "category": "Productivity",
+    "capabilities": ["Write", "Review"],
+    "defaultPrompt": [
+      "가이드",
+      "가이드 보고 이 요구사항을 구현해줘.",
+      "현재 브랜치의 PR 준비 상태를 점검해줘."
+    ],
+    "brandColor": "#2563EB"
+  }
+}

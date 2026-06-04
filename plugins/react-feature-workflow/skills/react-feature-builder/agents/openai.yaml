@@ -1,0 +1,4 @@
+interface:
+  display_name: "React 기능 빌더"
+  short_description: "요구사항부터 검증까지 React 기능 개발을 진행합니다"
+  default_prompt: "$react-feature-builder로 요구사항 분석, 설계, 구현, 컨벤션 검사, 코드 리뷰, 테스트 생성, 검증까지 진행해줘."

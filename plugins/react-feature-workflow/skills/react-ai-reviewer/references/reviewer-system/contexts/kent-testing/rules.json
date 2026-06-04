@@ -1,0 +1,24 @@
+{
+  "focus": [
+    "user-centered assertions",
+    "accessible queries",
+    "async reliability",
+    "avoiding implementation-detail coupling"
+  ],
+  "ignore": [
+    "test framework preference debates",
+    "generic requests for more tests without a concrete gap"
+  ],
+  "severityHints": {
+    "critical": [],
+    "high": [
+      "the test misses a likely regression or is clearly flaky"
+    ],
+    "medium": [
+      "the test is tightly coupled to implementation details and may regress easily"
+    ],
+    "low": [
+      "the query or assertion could be improved but still protects the behavior"
+    ]
+  }
+}

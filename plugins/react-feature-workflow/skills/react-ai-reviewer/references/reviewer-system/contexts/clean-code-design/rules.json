@@ -1,0 +1,25 @@
+{
+  "focus": [
+    "cohesion and coupling",
+    "shotgun surgery and fragility",
+    "practical SOLID",
+    "behavior-preserving refactoring"
+  ],
+  "ignore": [
+    "pattern naming for its own sake",
+    "style-only comments",
+    "premature generalization with no concrete change scenario"
+  ],
+  "severityHints": {
+    "critical": [],
+    "high": [
+      "a new variant or dependency change clearly forces risky edits across multiple sites"
+    ],
+    "medium": [
+      "responsibility mixing or coupling will make the next change noticeably harder"
+    ],
+    "low": [
+      "a refactoring idea improves structure but the current breakage risk is limited"
+    ]
+  }
+}

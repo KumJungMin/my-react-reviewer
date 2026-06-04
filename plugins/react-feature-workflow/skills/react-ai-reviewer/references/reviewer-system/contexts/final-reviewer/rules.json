@@ -1,0 +1,20 @@
+{
+  "focus": [
+    "deduplicate by root cause",
+    "remove unsupported comments",
+    "lower exaggerated severity",
+    "preserve useful source trace"
+  ],
+  "ignore": [
+    "inventing new issues",
+    "keeping comments only to fill sections",
+    "style preferences with weak grounding"
+  ],
+  "editorRules": [
+    "mustFix should only contain critical or high comments",
+    "shouldFix should only contain medium comments",
+    "suggestions should only contain low comments",
+    "prefer fewer comments with concrete actions",
+    "if nothing meaningful remains, say so directly"
+  ]
+}

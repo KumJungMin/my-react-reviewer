@@ -1,0 +1,29 @@
+{
+  "focus": [
+    "service page responsibility boundaries",
+    "view model hook structure",
+    "design-system primitive/domain separation",
+    "React-dependent versus pure logic separation",
+    "public export boundaries",
+    "domain field public API retention"
+  ],
+  "ignore": [
+    "file splitting without a concrete change reason",
+    "adding a usecase package before real API integration",
+    "private type relocation that does not reduce coupling"
+  ],
+  "severityHints": {
+    "critical": [],
+    "high": [
+      "a page or design-system component mixes external API policy, validation, stateful orchestration, and detailed JSX in a way that makes current behavior risky to change"
+    ],
+    "medium": [
+      "stateful page flow, callback wiring, and pure validation/formatting are mixed enough that the next feature change will touch multiple unrelated responsibilities",
+      "design-system code contains service-specific domain names or page-only policies",
+      "a design-system public export accidentally drops an intended domain field such as AddressField or IdDocumentField"
+    ],
+    "low": [
+      "the module mostly works but would benefit from incremental VM hook, utils, or core extraction"
+    ]
+  }
+}

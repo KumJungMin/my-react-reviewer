@@ -1,0 +1,24 @@
+{
+  "focus": [
+    "async waterfall",
+    "data fetching placement",
+    "bundle and client boundary cost",
+    "avoidable re-render fan-out"
+  ],
+  "ignore": [
+    "unmeasured micro-optimizations",
+    "adding useMemo or useCallback without a clear bottleneck"
+  ],
+  "severityHints": {
+    "critical": [],
+    "high": [
+      "the diff introduces a clear user-visible latency bottleneck"
+    ],
+    "medium": [
+      "the structure creates repeated fetch or heavy render work"
+    ],
+    "low": [
+      "the performance idea is useful but impact is limited or uncertain"
+    ]
+  }
+}
