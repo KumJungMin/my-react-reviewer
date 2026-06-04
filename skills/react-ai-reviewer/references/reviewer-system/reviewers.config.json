@@ -66,6 +66,38 @@
       }
     },
     {
+      "id": "handler-naming",
+      "title": "Handler / Callback Naming 리뷰어",
+      "sourceBasis": "React 공식 이벤트 핸들러 관례와 MUI, HeroUI, Radix UI, Headless UI, React Aria, TanStack Table, Downshift의 callback prop 관례 및 프로젝트 design-system API naming policy를 바탕으로 external on*, internal handle*, controlled onStateChange, canonical public prop, alias policy, domain action naming을 구분한다.",
+      "promptPath": "prompts/09-handler-naming.md",
+      "contextPath": "contexts/handler-naming/compressed.md",
+      "rulesPath": "contexts/handler-naming/rules.json",
+      "order": 45,
+      "enabled": true,
+      "type": "source",
+      "excludeFilePatterns": [],
+      "triggers": {
+        "filePatterns": [],
+        "keywords": ["handler", "handle", "callback", "onClick", "onChange", "onPress", "onOpenChange", "onValueChange", "onCheckedChange", "onSelectionChange", "onSelectedItemChange", "onSubmit", "onClose", "onSelect", "isInvalid", "hasError", "invalid", "startContent", "endContent", "topContent", "bottomContent", "variant", "designType", "buttonStyle", "alias", "deprecation", "public API", "HeroUI", "MUI"]
+      }
+    },
+    {
+      "id": "page-layering",
+      "title": "Page / Design-System Layering 리뷰어",
+      "sourceBasis": "프로젝트 service page와 design-system module의 책임 분리 규칙: Page entry, VM hook, page-local hooks, pure utils/core, type boundary, style boundary, export boundary, domain field public API retention을 구분한다.",
+      "promptPath": "prompts/10-page-layering.md",
+      "contextPath": "contexts/page-layering/compressed.md",
+      "rulesPath": "contexts/page-layering/rules.json",
+      "order": 47,
+      "enabled": true,
+      "type": "source",
+      "excludeFilePatterns": ["**/*.test.*", "**/*.spec.*", "**/__tests__/**"],
+      "triggers": {
+        "filePatterns": ["apps/service/src/presentation/page/**", "packages/design-system/src/components/**", "**/*Page.tsx", "**/use*Page.ts", "**/*.utils.ts", "**/*.core.ts"],
+        "keywords": ["PageView", "view model", "VM", "PageContainer", "design-system", "usecase", "provider", "context", "core.ts", "utils.ts", "responsibility", "AddressField", "IdDocumentField", "domain field", "public API", "root export"]
+      }
+    },
+    {
       "id": "vercel-performance",
       "title": "Vercel 성능 리뷰어",
       "sourceBasis": "Vercel React Best Practices: async waterfall, bundle size, server/client data fetching, re-render optimization",

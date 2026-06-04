@@ -66,6 +66,9 @@
 - [React - Separating Events from Effects](https://react.dev/learn/separating-events-from-effects): event handler는 non-reactive interaction logic, Effect는 reactive synchronization logic
 - [React - useEffectEvent](https://react.dev/reference/react/useEffectEvent): Effect 내부의 non-reactive event 분리, dependency 회피 수단으로 쓰면 안 됨
 - [React - Thinking in React](https://react.dev/learn/thinking-in-react): 최소한의 완전한 state 표현, state 위치, inverse data flow
+- [React - Keeping Components Pure](https://react.dev/learn/keeping-components-pure): component는 같은 입력에 같은 JSX를 반환해야 하며 render phase side effect를 피해야 함
+- [React - useMemo](https://react.dev/reference/react/useMemo): memoization은 semantic guarantee가 아니라 성능 최적화이며, 비싼 계산이나 memoized child 최적화 같은 구체적 이유가 있을 때 사용
+- [React - memo](https://react.dev/reference/react/memo): component re-render skip 역시 보장이 아니라 성능 최적화이며 props 안정성과 실제 병목 근거가 필요함
 - [React - State as a Snapshot](https://react.dev/learn/state-as-a-snapshot): render별 props/state/event handler snapshot, setter 이후 현재 render 값은 즉시 바뀌지 않음
 - [React - Queueing a Series of State Updates](https://react.dev/learn/queueing-a-series-of-state-updates): state update queue, batching, functional updater
 - [React - Choosing the State Structure](https://react.dev/learn/choosing-the-state-structure): related/contradictory/redundant/duplicated/nested state 기준

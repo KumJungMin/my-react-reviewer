@@ -15,6 +15,35 @@ This skill keeps the original reviewer system under `references/reviewer-system/
 - supporting docs: `references/reviewer-system/docs/`
 - deterministic brief generator: `scripts/prepare-codex-review.mjs`
 
+Handler and callback naming has a dedicated reviewer context:
+
+- reviewer id: `handler-naming`
+- prompt: `references/reviewer-system/prompts/09-handler-naming.md`
+- context: `references/reviewer-system/contexts/handler-naming/compressed.md`
+- rules: `references/reviewer-system/contexts/handler-naming/rules.json`
+
+Load it when the review involves callback prop APIs, local event handlers, DOM event adapters, controlled state callbacks, or naming changes around `on*`, `handle*`, and business action functions.
+
+Design-system public API naming and alias policy is part of the handler naming lens:
+
+- Boolean state props use `is*` or `has*`: prefer `isInvalid`, `isDisabled`, `isLoading`, `isRounded`, `hasNotification`, and `hasHomeIndicator` over vague names such as `hasError` or `invalid`.
+- Controlled value changes use `onValueChange(value, event?)`. Keep native `onChange(event)` only when consumers need the DOM event.
+- Controlled open/visibility state uses `open`, `defaultOpen`, and `onOpenChange(open)`. `onClose` may remain as a close-request convenience API when the component already exposes it.
+- Horizontal slots use `startContent` and `endContent`; vertical slots use `topContent` and `bottomContent`. Treat `left`, `right`, `prefix`, `suffix`, `topAccessory`, and `bottomAccessory` as legacy aliases for new public APIs.
+- Styling choices use `variant` first, with specific names such as `color`, `tone`, or `size` only when they describe a different concept. Avoid new `type`, `designType`, or `buttonStyle` props for styling variants.
+- Compatibility aliases may stay during migration, but the canonical prop must win when both are provided. New examples, docs, tests, and public usage should use only canonical names.
+
+Page and design-system layering has a dedicated reviewer context:
+
+- reviewer id: `page-layering`
+- prompt: `references/reviewer-system/prompts/10-page-layering.md`
+- context: `references/reviewer-system/contexts/page-layering/compressed.md`
+- rules: `references/reviewer-system/contexts/page-layering/rules.json`
+
+Load it when the review or fix involves `apps/service/src/presentation/page/**`, `packages/design-system/src/components/**`, page VM hooks, `.utils.ts`, `.core.ts`, provider/context hooks, or responsibility separation between UI, stateful orchestration, and pure logic. Do not propose a separate usecase package unless the user explicitly asks for it or real feature API integration creates that layer.
+
+For `packages/design-system`, domain fields such as `AddressField` and `IdDocumentField` are allowed to remain public design-system APIs when they clarify product intent. Keep shared primitives (`TextField`, `SplitTextField`, `SelectBox`) generic, and expose only public components/types from component `index.ts` or the root package export.
+
 ## Modes
 
 Choose one of these three modes:
@@ -72,6 +101,12 @@ Optional reviewer override:
 
 ```bash
 node skills/react-ai-reviewer/scripts/prepare-codex-review.mjs --diff pr.diff --reviewers react-official,react-hooks-eslint,maintainability
+```
+
+Handler naming focused override:
+
+```bash
+node skills/react-ai-reviewer/scripts/prepare-codex-review.mjs --diff pr.diff --reviewers handler-naming,maintainability
 ```
 
 The script writes:
@@ -133,6 +168,7 @@ If the request is a quick single-file review without a diff, use only the minimu
 - Start with a short implementation plan.
 - Edit the minimum necessary files.
 - Keep the work tightly scoped to the user's stated goals.
+- If JSX decomposition is requested or clearly needed, apply it only when it improves readability or responsibility boundaries under the JSX decomposition rules below.
 - If the user still wants the original reviewer perspectives, generate the brief first and use the selected reviewer prompts as guidance before editing.
 - After changes, explain what changed and what was verified.
 
@@ -145,6 +181,12 @@ If the user does not specify priorities, use:
 - data fetching or async changes: bug, performance
 
 For deeper guidance, use the selected reviewer prompts and contexts under `references/reviewer-system/`.
+
+If the user explicitly asks about handler or callback naming, include `handler-naming` even when it would not be selected by the deterministic diff matcher.
+
+If the user explicitly asks about design-system API naming, HeroUI/MUI-style props, alias/deprecation policy, or public component API ergonomics, include both `handler-naming` and `page-layering`.
+
+If the user explicitly asks about page structure, design-system level, UI/logic separation, VM hooks, or usecase boundaries, include `page-layering` even when it would not be selected by the deterministic diff matcher.
 
 ## Command Patterns
 
@@ -198,6 +240,13 @@ Treat these as the three supported command templates:
 ## Noise Control
 
 - Do not recommend `useMemo` or `useCallback` by default.
+- JSX decomposition is conditional, not automatic. Split JSX only when there is a clear semantic boundary such as `Header`, `Content`, `Footer`, `Hero`, `Guide`, `Actions`, or `CTA`, or when a page/component body mixes orchestration state, event wiring, translation/data mapping, and large visual sections enough to obscure the main flow.
+- When JSX decomposition is justified, prefer top-level presentational components in the same file for meaningful visual sections. Keep the container/page component focused on state, event handlers, translation/data mapping, and section composition. Pass primitive values, callbacks, or stable data shapes into the presentational sections.
+- Avoid defining component functions inside another component. If the extracted unit should be rendered as `<Section />`, declare it at module scope so React sees a stable component type and local state below it is not accidentally reset.
+- Use local `const` JSX or a `render*` helper only for small one-off templates that are tightly coupled to the surrounding closure and do not deserve a React component boundary. If the helper grows into a semantic section, promote it to a top-level presentational component.
+- Do not add `memo`, `useMemo`, or `useCallback` solely because JSX was split. Memoization needs a concrete reason such as expensive calculation, memoized children that benefit from stable props, or profiler-observed re-render cost.
+- For slot/template props such as `contents`, `left`, `right`, `header`, or `footer`, extract JSX only when inline conditional rendering, a11y labels, or styling decisions obscure the main structure. Use nearest-scope local `const` by default, module-level helper for reused/branchy pure builders, and module-level `const` only for static values. Leave short obvious JSX inline; do not add memoization for this readability refactor.
+- Dataize repeated JSX with `map` only when the structure is homogeneous, the data shape is clearer than duplicated JSX, stable semantic keys exist, and there are usually 3+ items or likely growth. Avoid for simple two-button navigation, utility-key rows, or divergent handlers/content; do not add memoization solely for mapped templates.
 - Do not push a folder reorganization unless the change clearly causes maintenance cost now.
 - Do not blur review-only and edit modes.
 - Use the final reviewer lens to reduce noise and merge overlapping findings.
@@ -205,3 +254,6 @@ Treat these as the three supported command templates:
 - Prefer extracting framework-agnostic logic into pure `.ts` when that logic does not need React runtime concerns.
 - Prefer React components and hooks to stay as thin wrappers around state, lifecycle, DOM, context, and event wiring when pure `.ts` logic can own calculation, mapping, validation, or policy decisions.
 - Do not suggest extraction for its own sake. Only recommend it when it clearly reduces change impact, improves testability, or sharpens responsibility boundaries.
+- For handler naming, do not raise style-only nits. Only flag names when they blur API contracts, hide whether a function is a DOM event adapter vs. domain action, or make future interaction changes harder.
+- Prefer `on*` for external callback props, `handle*` for component-local event adapters, `on[State]Change` for controlled state callbacks, and business verbs without `handle` for domain/usecase actions.
+- For design-system public APIs, prefer canonical HeroUI-style names (`isInvalid`, `onValueChange`, `startContent`, `endContent`, `variant`) and allow legacy aliases only as migration shims where canonical props take precedence.
