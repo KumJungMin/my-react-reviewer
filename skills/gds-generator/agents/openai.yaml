@@ -1,0 +1,4 @@
+interface:
+  display_name: "GDS Generator"
+  short_description: "Build and harden React design-system components"
+  default_prompt: "Use $gds-generator to create, refactor, or harden this React design-system component with API, accessibility, styling, docs, tests, and exports."
