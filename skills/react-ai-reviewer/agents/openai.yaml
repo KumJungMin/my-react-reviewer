@@ -1,4 +1,4 @@
 interface:
   display_name: "React AI Reviewer"
-  short_description: "Review React code with the original multi-reviewer flow in 3 modes"
-  default_prompt: "Use $react-ai-reviewer to review or improve this React code. Preserve the original reviewer selection and context flow when helpful, and ask concise follow-up questions first if mode or scope is missing."
+  short_description: "Final-review React code with multi-reviewer context"
+  default_prompt: "Use $react-ai-reviewer to run a final review of this React code, preserving the original reviewer selection and context flow when helpful."

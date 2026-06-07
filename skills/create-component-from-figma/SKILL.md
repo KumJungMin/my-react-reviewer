@@ -1,11 +1,18 @@
 ---
 name: create-component-from-figma
-description: "Translate Figma files, screenshots, mockups, and written UI descriptions into production-ready React + TypeScript components styled with Vanilla Extract and aligned to the current repository's design system. Use when Codex needs to inspect existing UI primitives, tokens, utilities, and nearby feature patterns before implementing or refining a component from a Figma URL, node-id, screenshot, or mockup."
+description: "Translate Figma files, screenshots, mockups, and written UI descriptions into initial production-ready React + TypeScript components styled with Vanilla Extract and aligned to the current repository's design system. Use primarily when the user provides a Figma link, node-id, screenshot, or mockup and asks to code the UI. If the request combines business requirements, prescribed components, and a Figma link, use skills/business-feature-builder as the primary workflow. If the request is to harden or update existing design-system code, use skills/gds-generator."
 ---
 
 # Create Component From Figma
 
 Implement durable product code from design assets. Prioritize repository fit, semantics, accessibility, reusability, and maintainability before pixel fidelity.
+
+## Routing
+
+- Use this skill as the primary workflow for Figma/screenshot/mockup-to-code requests.
+- If the user provides business requirements plus components to use plus a Figma link, use `skills/business-feature-builder` as the primary workflow and use this skill only for design interpretation.
+- If the user asks to refine, harden, or update generated code into a design-system-quality component, use `skills/gds-generator`.
+- If the user asks for final review, use `skills/react-ai-reviewer`.
 
 ## Inputs
 

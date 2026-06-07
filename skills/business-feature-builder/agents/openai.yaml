@@ -1,0 +1,4 @@
+interface:
+  display_name: "Business Feature Builder"
+  short_description: "Implement React business features with clean splits"
+  default_prompt: "Use $business-feature-builder to implement this React/TypeScript business feature with skeleton-first flow, separated UI/business logic, and focused tests."

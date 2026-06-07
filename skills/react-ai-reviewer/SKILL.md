@@ -1,11 +1,19 @@
 ---
 name: react-ai-reviewer
-description: "Use when the user wants to review or improve React, TSX, JSX, hooks, component tests, or nearby frontend code in Codex or VS Code Codex. This skill preserves the original multi-reviewer React review flow with reviewer selection, prompts, contexts, and final-review merging guidance. Supports three modes: review-only, apply-selected-review-items, and direct-fix. If key inputs are missing, ask concise follow-up questions for the mode, target, priorities, scope boundary, and verification method."
+description: "Use for final review or review-driven improvement of React, TSX, JSX, hooks, component tests, or nearby frontend code in Codex or VS Code Codex. This skill preserves the original multi-reviewer React review flow with reviewer selection, prompts, contexts, and final-review merging guidance. For new business feature implementation use skills/business-feature-builder; for raw Figma-to-code use skills/create-component-from-figma; for design-system hardening or packages/design-system updates use skills/gds-generator."
 ---
 
 # React AI Reviewer
 
 Use this skill when the user wants a structured React review workflow instead of an ad hoc coding reply.
+
+Use this as the final review step after `create-component-from-figma`, `business-feature-builder`, or `gds-generator` has produced changes.
+
+For design-system component generation, public API design, HeroUI-style component/hook splitting, or substantial changes under `packages/design-system`, use `skills/gds-generator` instead. This reviewer may review existing design-system code, but it should not be the primary workflow for generating or refactoring GDS components.
+
+For business feature implementation, page logic, form flows, async orchestration, UI/business separation, or test generation from requirements, use `skills/business-feature-builder` instead. This reviewer may review those changes after implementation, but it should not be the primary workflow for building them.
+
+For raw Figma/screenshot/mockup-to-code requests, use `skills/create-component-from-figma` instead. This reviewer may review the generated result afterward.
 
 This skill keeps the original reviewer system under `references/reviewer-system/`:
 
@@ -165,6 +173,8 @@ If the request is a quick single-file review without a diff, use only the minimu
 
 ## Direct-Fix Workflow
 
+- Use direct-fix only for review-driven fixes, explicitly selected review findings, or small corrective edits after a review pass.
+- Do not use direct-fix as the primary workflow for raw Figma-to-code work, business feature implementation, or design-system hardening.
 - Start with a short implementation plan.
 - Edit the minimum necessary files.
 - Keep the work tightly scoped to the user's stated goals.
