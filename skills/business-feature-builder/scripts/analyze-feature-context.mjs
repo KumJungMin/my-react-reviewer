@@ -19,6 +19,7 @@ const RESPONSIBILITY_NEEDLES = {
   navigation: ["navigate(", "router.", "useNavigate", "useRouter", "history.", "redirect("],
   validation: ["validate", "validation", "isValid", "invalid", "required", "schema", "zod", "yup"],
   mapping: ["map", "mapper", "toDto", "fromDto", "format", "parse", "transform", "normalize"],
+  styleDecision: ["className", "styles.", "css.", "style=", "style:", "data-", "variant", "color", "tone", "size"],
   policy: ["canSubmit", "can", "should", "policy", "permission", "limit", "eligib"],
   analytics: ["analytics", "track(", "logEvent", "sendEvent"],
   api: ["api/", "apis/", "repository", "repositories", "service", "services", "usecase", "useCase"],
@@ -187,6 +188,52 @@ function extractImports(content) {
   return imports;
 }
 
+function extractRenderHelpers(content) {
+  const helpers = [];
+  const patterns = [
+    /\bconst\s+(render[A-Z]\w*)\s*=/g,
+    /\bfunction\s+(render[A-Z]\w*)\s*\(/g,
+  ];
+
+  for (const pattern of patterns) {
+    for (const match of content.matchAll(pattern)) {
+      helpers.push(match[1]);
+    }
+  }
+
+  return Array.from(new Set(helpers)).sort();
+}
+
+function extractPageSubRenderFunctions(content, filePath) {
+  const baseName = path.basename(filePath).replace(/\.(tsx|jsx|ts|js)$/, "");
+  const pagePrefix = baseName.replace(/Page$/, "");
+  if (!pagePrefix || pagePrefix === baseName) return [];
+
+  const functions = [];
+  const pattern = new RegExp(`\\b(?:function|const)\\s+(${pagePrefix}[A-Z]\\w*)`, "g");
+  for (const match of content.matchAll(pattern)) {
+    functions.push(match[1]);
+  }
+
+  return Array.from(new Set(functions)).sort();
+}
+
+function extractLocalInterfaces(content) {
+  const interfaces = [];
+  for (const match of content.matchAll(/\binterface\s+([A-Z]\w*Props)\b/g)) {
+    interfaces.push(match[1]);
+  }
+  return Array.from(new Set(interfaces)).sort();
+}
+
+function hasParentStyleDependency(imports) {
+  return imports.some((moduleName) => /^(\.\.\/)+/.test(moduleName) && /(\.css|styles?|\.css\.ts|\.css\.tsx)/.test(moduleName));
+}
+
+function isPageLocalComponent(filePath) {
+  return /\/page\/[^/]+\/components\/[^/]+\.(tsx|jsx)$/.test(filePath.split(path.sep).join("/"));
+}
+
 function addSignal(signals, signal) {
   signals.push(signal);
 }
@@ -195,6 +242,10 @@ function analyzeFile(repoRoot, filePath) {
   const content = fs.readFileSync(filePath, "utf8");
   const role = classifyRole(filePath);
   const facts = collectFacts(content);
+  const imports = extractImports(content);
+  const renderHelpers = extractRenderHelpers(content);
+  const pageSubRenderFunctions = extractPageSubRenderFunctions(content, filePath);
+  const localInterfaces = extractLocalInterfaces(content);
   const signals = [];
 
   if (role === "component" || role === "page") {
@@ -213,6 +264,46 @@ function analyzeFile(repoRoot, filePath) {
         detail: "UI/page file contains validation, mapping, formatting, or policy syntax; consider .core.ts extraction",
       });
     }
+
+    if (facts.ui > 0 && facts.styleDecision > 0 && facts.mapping > 0) {
+      addSignal(signals, {
+        ruleId: "ui-style-mapping-mixed",
+        category: "page-assembly",
+        detail: "File appears to combine UI assembly, style decisions, and data mapping; verify section/core extraction",
+      });
+    }
+  }
+
+  if (role === "page" && renderHelpers.length >= 2) {
+    addSignal(signals, {
+      ruleId: "page-render-helper-cluster",
+      category: "page-assembly",
+      detail: `Page file has ${renderHelpers.length} local render helpers: ${renderHelpers.join(", ")}`,
+    });
+  }
+
+  if (role === "page" && pageSubRenderFunctions.length >= 2) {
+    addSignal(signals, {
+      ruleId: "page-sub-render-function-cluster",
+      category: "page-assembly",
+      detail: `Page file has ${pageSubRenderFunctions.length} page-specific sub-render functions: ${pageSubRenderFunctions.join(", ")}`,
+    });
+  }
+
+  if ((role === "page" || role === "component") && content.split(/\r?\n/).length >= 200 && facts.ui > 0) {
+    addSignal(signals, {
+      ruleId: "large-jsx-file",
+      category: "page-assembly",
+      detail: "File is 200+ lines with UI syntax; verify semantic section extraction before adding more JSX",
+    });
+  }
+
+  if (isPageLocalComponent(filePath) && hasParentStyleDependency(imports)) {
+    addSignal(signals, {
+      ruleId: "page-component-parent-style-dependency",
+      category: "page-assembly",
+      detail: "Page-local component imports parent-level style module; verify section styles are self-contained or intentionally shared",
+    });
   }
 
   if ((role === "core" || role === "utils") && facts.reactState > 0) {
@@ -235,8 +326,14 @@ function analyzeFile(repoRoot, filePath) {
     path: toDisplayPath(repoRoot, filePath),
     role,
     lines: content.split(/\r?\n/).length,
-    imports: extractImports(content),
+    imports,
     facts,
+    pageAssembly: {
+      renderHelpers,
+      pageSubRenderFunctions,
+      localInterfaces,
+      hasParentStyleDependency: hasParentStyleDependency(imports),
+    },
     signals,
   };
 }
@@ -354,6 +451,28 @@ function renderMarkdown(report) {
   } else {
     for (const signal of signals) {
       lines.push(`- ${signal.file} [${signal.category}/${signal.ruleId}]: ${signal.detail}`);
+    }
+  }
+  lines.push("");
+
+  lines.push("## Page Assembly Facts", "");
+  const pageAssemblyFiles = report.files.filter(
+    (file) =>
+      file.pageAssembly.renderHelpers.length > 0 ||
+      file.pageAssembly.pageSubRenderFunctions.length > 0 ||
+      file.pageAssembly.localInterfaces.length > 0 ||
+      file.pageAssembly.hasParentStyleDependency,
+  );
+  if (pageAssemblyFiles.length === 0) {
+    lines.push("- No page assembly facts detected.");
+  } else {
+    for (const file of pageAssemblyFiles) {
+      lines.push(`- \`${file.path}\``);
+      if (file.pageAssembly.renderHelpers.length > 0) lines.push(`  - render helpers: ${file.pageAssembly.renderHelpers.join(", ")}`);
+      if (file.pageAssembly.pageSubRenderFunctions.length > 0)
+        lines.push(`  - page-specific sub-render functions: ${file.pageAssembly.pageSubRenderFunctions.join(", ")}`);
+      if (file.pageAssembly.localInterfaces.length > 0) lines.push(`  - local Props interfaces: ${file.pageAssembly.localInterfaces.join(", ")}`);
+      if (file.pageAssembly.hasParentStyleDependency) lines.push("  - imports parent-level style dependency");
     }
   }
   lines.push("");

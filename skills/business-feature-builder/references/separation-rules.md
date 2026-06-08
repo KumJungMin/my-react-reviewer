@@ -53,10 +53,26 @@ Keep together when splitting would hide simple logic behind indirection. A two-l
 
 Do not build one large JSX block. Extract top-level presentational components when there are clear semantic regions:
 
-- header, guide, content, form, list, summary, footer, CTA, error state, empty state
+- header, hero, guide, content, form, card, list, summary, FAQ, modal trigger, footer, CTA, error state, empty state
 - repeated homogeneous item rows
 - expensive or frequently rerendering sections
 - sections with independent accessibility or interaction responsibilities
+
+For page-level files, treat `{PageName}Page.tsx` as an assembly layer. It should call `use{PageName}Page`, receive the view model, and compose semantic sections. It should not keep accumulating local `render*` helpers as the page grows.
+
+Mark section extraction candidates when a page has two or more local `render*` helpers or page-specific sub-render functions such as `ServiceIntroHeader`, `ServiceIntroGuide`, or `ServiceIntroCTA`.
+
+Split a page section when at least one condition is true:
+
+- it is a clear semantic region such as header, hero, card, CTA, FAQ, or modal trigger
+- it can have its own `interface Props`
+- it can work only from `props` and event callbacks without calling `use{PageName}Page`
+- it may be reused in two or more places
+- the render helper grows past roughly 30-40 lines or gains multiple branches
+- the page body grows past roughly 200 lines of JSX or mixes UI assembly, style decisions, data mapping, and event wiring
+- it is useful as a separate test or review unit
+
+Default placement is `apps/service/src/presentation/page/<PageName>/components/` when page-local component folders are used. Otherwise keep the section file under the `<PageName>` folder. Do not promote to shared components without real cross-page reuse.
 
 Do not define React components inside another React component. Use module-scope presentational components for stable component identity.
 

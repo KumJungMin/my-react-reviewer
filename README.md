@@ -125,6 +125,8 @@ $business-feature-builder로 회원 탈퇴 페이지 기능을 구현해줘.
 - `{Component}.tsx`는 JSX, layout, presentational composition 중심으로 유지
 - `use{Component}.tsx`는 React state, handler, lifecycle, navigation, async orchestration 담당
 - `.core.ts` 또는 `.utils.ts`는 validation, mapping, formatting 같은 pure logic 담당
+- 페이지는 `{PageName}Page.tsx` 조립 layer와 `use{PageName}Page` VM hook으로 나누고, `render*` helper가 2개 이상이거나 200줄 이상 JSX/복잡도라면 semantic section component 분리 후보로 본다
+- page-specific section은 기본적으로 `apps/service/src/presentation/page/<PageName>/components/` 또는 `<PageName>` 하위 파일에 둔다
 - 테스트는 normal flow, validation, error/failure, loading/disabled, 의미 있는 edge case를 포함
 
 ### Preflight

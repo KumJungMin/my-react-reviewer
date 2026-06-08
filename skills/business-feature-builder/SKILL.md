@@ -44,10 +44,91 @@ Use `.business-feature-builder/feature-context.md` to choose the smallest files 
    - `{Component}.tsx`: JSX, layout, presentational composition, and child components.
    - `use{Component}.tsx`: React state, event handlers, lifecycle, navigation, async orchestration, validation flow, derived state, and submit flow.
    - `.core.ts` or `.utils.ts`: pure calculations, mapping, validation, formatting, policy, and functions that do not need React.
-4. Implement the TODO bodies after the skeleton is in place. Do not stop at skeleton unless the user explicitly asks for scaffolding only.
-5. Split UI by role, rerender boundary, performance, and readability. Avoid meaningless over-splitting.
-6. Generate or update tests from the requirements. Cover normal flow, validation, failure/error, loading/disabled states, and meaningful edge cases.
-7. Run relevant validation and report exact commands and results.
+4. For page-level work, apply the Page Assembly Structure rules before adding local `render*` helpers.
+5. Implement the TODO bodies after the skeleton is in place. Do not stop at skeleton unless the user explicitly asks for scaffolding only.
+6. Split UI by role, rerender boundary, performance, and readability. Avoid meaningless over-splitting.
+7. Generate or update tests from the requirements. Cover normal flow, validation, failure/error, loading/disabled states, and meaningful edge cases.
+8. Run relevant validation and report exact commands and results.
+
+## Page Assembly Structure
+
+For page or route-level features, keep the page as an assembly layer:
+
+- `{PageName}Page.tsx`: receive props if any, call `use{PageName}Page`, wire the view model, and compose sections.
+- `use{PageName}Page.ts`: own page state, handlers, effects, async orchestration, validation flow, navigation, and commands.
+- Page section components: semantic UI regions that receive only the props and events they need.
+- `.core.ts` or `.utils.ts`: mapping, formatting, validation, predicates, reducers, and policy that do not need React runtime state.
+
+Always mark decomposition candidates before implementation when a page has two or more local `render*` helpers or page-specific sub-render functions such as `ServiceIntro*`. `serviceIntroPage`-style pages with multiple `renderGuide`, `renderCTA`, `ServiceIntroHeader`, or similar helpers should not keep growing as one local render cluster without an explicit reason.
+
+Split a page section into a component when at least one condition is true:
+
+- It is a semantic UI region such as header, hero, guide, card, list, FAQ, CTA, modal trigger, footer, empty state, or error state.
+- It can have its own `interface Props` that describes only the data and events it needs.
+- It can work from `props` without directly reading page-level `use{PageName}Page` state or mutating page-local variables.
+- It is reused or likely to be reused in two or more places.
+- A render helper grows past roughly 30-40 lines, accumulates multiple branches, or becomes hard to scan in review.
+- The page/component body grows past roughly 200 lines of JSX or mixes UI assembly, style decisions, data mapping, and event wiring enough to obscure the main page flow.
+- It would be useful as a separate test or review unit.
+
+Keep a section local when it is still tightly coupled to page-only state, closures, or one-off conditional markup and extracting it would hide simple logic behind indirection.
+
+Default placement:
+
+- Prefer `apps/service/src/presentation/page/<PageName>/components/` for page-specific section components when the repository uses page-local component folders.
+- Otherwise keep section files under the `<PageName>` folder next to the page, hook, styles, and tests.
+- Do not move a page section into shared components unless there is real cross-page reuse or an explicit team convention.
+
+Example:
+
+```tsx
+function ServiceIntroPage() {
+  const vm = useServiceIntroPage();
+
+  const renderHero = () => <section>{/* hero UI */}</section>;
+  const renderGuideCards = () => <section>{/* guide cards */}</section>;
+  const renderCTA = () => <footer>{/* CTA */}</footer>;
+
+  return (
+    <PageContainer>
+      {renderHero()}
+      {renderGuideCards()}
+      {renderCTA()}
+    </PageContainer>
+  );
+}
+```
+
+```tsx
+export function ServiceIntroPage() {
+  const vm = useServiceIntroPage();
+
+  return (
+    <PageContainer>
+      <ServiceIntroHero title={vm.title} description={vm.description} />
+      <ServiceIntroGuideCards items={vm.guideItems} />
+      <ServiceIntroCTA label={vm.ctaLabel} onStart={vm.handleStart} />
+    </PageContainer>
+  );
+}
+
+interface ServiceIntroCTAProps {
+  label: string;
+  onStart: () => void;
+}
+
+function ServiceIntroCTA({ label, onStart }: ServiceIntroCTAProps) {
+  return (
+    <footer>
+      <button type="button" onClick={onStart}>
+        {label}
+      </button>
+    </footer>
+  );
+}
+```
+
+When extracting sections, pass primitive values, stable data shapes, and event callbacks. Do not let extracted components import or call `use{PageName}Page` directly.
 
 ## Core Rules
 
@@ -56,6 +137,7 @@ Use `.business-feature-builder/feature-context.md` to choose the smallest files 
 - Use hooks for React runtime concerns, not for pure calculations.
 - Extract top-level presentational components when JSX sections have clear roles or rerender boundaries.
 - Avoid defining React components inside React components.
+- Do not add new local `render*` helpers to large page files before evaluating page section extraction.
 - Use `memo`, `useMemo`, and `useCallback` only when there is a concrete rerender or expensive-computation reason.
 - Preserve existing repository conventions before inventing new folder structures.
 
