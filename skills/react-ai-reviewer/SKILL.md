@@ -23,6 +23,15 @@ This skill keeps the original reviewer system under `references/reviewer-system/
 - supporting docs: `references/reviewer-system/docs/`
 - deterministic brief generator: `scripts/prepare-codex-review.mjs`
 
+Internal React Quality Lens is bundled as a project-owned reviewer:
+
+- reviewer id: `react-quality-lens`
+- prompt: `references/reviewer-system/prompts/react-quality-lens.md`
+- context: `references/reviewer-system/contexts/react-quality-rules.md`
+- rules: `references/reviewer-system/contexts/react-quality-rules.json`
+
+Use it for general React quality, maintainability, state/effect cleanup, rendering performance, accessibility, type-safety, and testability checks. It is an internal markdown-based lens, not an external doctor/scanner integration.
+
 Handler and callback naming has a dedicated reviewer context:
 
 - reviewer id: `handler-naming`
@@ -51,6 +60,46 @@ Page and design-system layering has a dedicated reviewer context:
 Load it when the review or fix involves `apps/service/src/presentation/page/**`, `packages/design-system/src/components/**`, page VM hooks, `.utils.ts`, `.core.ts`, provider/context hooks, or responsibility separation between UI, stateful orchestration, and pure logic. Do not propose a separate usecase package unless the user explicitly asks for it or real feature API integration creates that layer.
 
 For `packages/design-system`, domain fields such as `AddressField` and `IdDocumentField` are allowed to remain public design-system APIs when they clarify product intent. Keep shared primitives (`TextField`, `SplitTextField`, `SelectBox`) generic, and expose only public components/types from component `index.ts` or the root package export.
+
+## Internal React Quality Review
+
+When reviewing React code, apply the internal React Quality Lens unless the user explicitly asks for only a different named reviewer perspective.
+
+Use this lens to check:
+
+- correctness
+- hooks and effects
+- state model
+- component responsibility
+- rendering performance
+- accessibility
+- type safety
+- testability
+
+Do not depend on external scanners or third-party diagnostic packages. The review must be based on source code, diff context, repository conventions, and internal rules.
+
+Classify findings into:
+
+- Must fix
+- Should fix
+- Suggestions
+- Open questions
+
+Avoid noisy advice:
+
+- Do not recommend `useMemo` or `useCallback` by default.
+- Do not recommend folder restructuring without clear maintenance benefit.
+- Do not split components only because they are long.
+- Do not suggest generic tests without specifying behavior.
+
+## Security Boundary
+
+- Do not install, execute, or import external diagnostic packages unless the user explicitly asks.
+- Do not send source code, diffs, secrets, environment variables, or repository metadata to third-party services.
+- Do not add GitHub Actions that require write permissions unless explicitly requested.
+- Do not read `.env`, secret files, private keys, tokens, or credential files unless the task explicitly requires that exact file and the user approves the scope.
+- When reviewing security-sensitive code, inspect only the source files required for the task.
+- Prefer internal markdown-based review rules over external scanners.
 
 ## Modes
 
@@ -197,6 +246,8 @@ If the user explicitly asks about handler or callback naming, include `handler-n
 If the user explicitly asks about design-system API naming, HeroUI/MUI-style props, alias/deprecation policy, or public component API ergonomics, include both `handler-naming` and `page-layering`.
 
 If the user explicitly asks about page structure, design-system level, UI/logic separation, VM hooks, or usecase boundaries, include `page-layering` even when it would not be selected by the deterministic diff matcher.
+
+If the user explicitly asks for React code 고도화, 리팩토링, useEffect/state cleanup, testability improvement, or a "doctor-style" diagnosis without external tools, include `react-quality-lens` even when the deterministic matcher would not select it.
 
 ## Command Patterns
 

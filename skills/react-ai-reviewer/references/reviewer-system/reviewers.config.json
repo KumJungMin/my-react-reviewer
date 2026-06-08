@@ -1,5 +1,5 @@
 {
-  "fallbackReviewerIds": ["react-official", "clean-code-design", "final-reviewer"],
+  "fallbackReviewerIds": ["react-official", "react-quality-lens", "clean-code-design", "final-reviewer"],
   "reviewers": [
     {
       "id": "react-official",
@@ -95,6 +95,22 @@
       "triggers": {
         "filePatterns": ["apps/service/src/presentation/page/**", "packages/design-system/src/components/**", "**/*Page.tsx", "**/use*Page.ts", "**/*.utils.ts", "**/*.core.ts"],
         "keywords": ["PageView", "view model", "VM", "PageContainer", "design-system", "usecase", "provider", "context", "core.ts", "utils.ts", "responsibility", "AddressField", "IdDocumentField", "domain field", "public API", "root export"]
+      }
+    },
+    {
+      "id": "react-quality-lens",
+      "title": "Internal React Quality Lens",
+      "sourceBasis": "Internal markdown-based React quality rules for correctness, hooks/effects, state model, responsibility boundaries, performance, accessibility, type safety, and testability. Does not depend on external diagnostic tools.",
+      "promptPath": "prompts/react-quality-lens.md",
+      "contextPath": "contexts/react-quality-rules.md",
+      "rulesPath": "contexts/react-quality-rules.json",
+      "order": 48,
+      "enabled": true,
+      "type": "source",
+      "excludeFilePatterns": [],
+      "triggers": {
+        "filePatterns": ["**/*.tsx", "**/*.jsx", "**/use*.ts", "**/use*.tsx", "**/components/**", "**/features/**"],
+        "keywords": ["useEffect", "derived state", "setState", "memo", "useMemo", "useCallback", "context", "accessibility", "any", "dangerouslySetInnerHTML", "validation", "mapping", "dto", "testability"]
       }
     },
     {

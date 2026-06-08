@@ -6,6 +6,7 @@
 - `create-component-from-figma`
 - `gds-generator`
 - `react-ai-reviewer`
+- `react-upgrade-workflow`
 
 ## 폴더 구조
 
@@ -24,6 +25,8 @@ skills/
     SKILL.md
     references/
     scripts/
+  react-upgrade-workflow/
+    SKILL.md
 ```
 
 각 폴더는 독립적인 Codex skill이며, `SKILL.md`의 frontmatter가 스킬 이름과 트리거 조건을 정의합니다. 자세한 절차와 판단 기준은 각 스킬의 `SKILL.md`와 필요한 `references/` 파일에 들어 있습니다.
@@ -38,6 +41,7 @@ ln -s /path/to/my-react-reviewer/skills/business-feature-builder ~/.codex/skills
 ln -s /path/to/my-react-reviewer/skills/create-component-from-figma ~/.codex/skills/create-component-from-figma
 ln -s /path/to/my-react-reviewer/skills/gds-generator ~/.codex/skills/gds-generator
 ln -s /path/to/my-react-reviewer/skills/react-ai-reviewer ~/.codex/skills/react-ai-reviewer
+ln -s /path/to/my-react-reviewer/skills/react-upgrade-workflow ~/.codex/skills/react-upgrade-workflow
 ```
 
 예시:
@@ -48,6 +52,7 @@ ln -s /Users/gjm/my-react-reviewer/skills/business-feature-builder ~/.codex/skil
 ln -s /Users/gjm/my-react-reviewer/skills/create-component-from-figma ~/.codex/skills/create-component-from-figma
 ln -s /Users/gjm/my-react-reviewer/skills/gds-generator ~/.codex/skills/gds-generator
 ln -s /Users/gjm/my-react-reviewer/skills/react-ai-reviewer ~/.codex/skills/react-ai-reviewer
+ln -s /Users/gjm/my-react-reviewer/skills/react-upgrade-workflow ~/.codex/skills/react-upgrade-workflow
 ```
 
 추가한 뒤에는 Codex를 재시작해야 새 스킬을 인식합니다.
@@ -59,6 +64,7 @@ cp -R /path/to/my-react-reviewer/skills/business-feature-builder ~/.codex/skills
 cp -R /path/to/my-react-reviewer/skills/create-component-from-figma ~/.codex/skills/
 cp -R /path/to/my-react-reviewer/skills/gds-generator ~/.codex/skills/
 cp -R /path/to/my-react-reviewer/skills/react-ai-reviewer ~/.codex/skills/
+cp -R /path/to/my-react-reviewer/skills/react-upgrade-workflow ~/.codex/skills/
 ```
 
 ## 스킬 호출 방식
@@ -69,6 +75,7 @@ cp -R /path/to/my-react-reviewer/skills/react-ai-reviewer ~/.codex/skills/
 - `$create-component-from-figma`
 - `$gds-generator`
 - `$react-ai-reviewer`
+- `$react-upgrade-workflow`
 
 자연어로 요청해도 트리거될 수 있지만, 원하는 스킬을 확실히 쓰게 하려면 `$스킬명`을 명시하는 편이 안전합니다.
 
@@ -80,6 +87,7 @@ cp -R /path/to/my-react-reviewer/skills/react-ai-reviewer ~/.codex/skills/
 2. Figma, screenshot, mockup, 텍스트 UI 설명을 React 컴포넌트로 옮기는 초기 구현: `create-component-from-figma`
 3. `packages/design-system` 코드 수정, 디자인 시스템 컴포넌트 생성/리팩터링/강화: `gds-generator`
 4. 구현 후 최종 리뷰, React/hooks/test 품질 점검, 리뷰 기반 수정: `react-ai-reviewer`
+5. 기존 React 코드 고도화, hooks/effect/state cleanup, 책임 분리, 테스트 가능성 개선: `react-upgrade-workflow`
 
 라우팅이 겹치면 더 구체적인 목적을 우선합니다. 예를 들어 비즈니스 요구사항과 Figma 링크가 함께 있으면 `create-component-from-figma`가 아니라 `business-feature-builder`를 기본 workflow로 쓰고, Figma 해석이 필요할 때만 보조적으로 `create-component-from-figma`를 참고합니다.
 
@@ -233,7 +241,38 @@ $react-ai-reviewer로 방금 리뷰한 내용 중 1번, 3번만 반영해줘.
 - `clean-code-design`: SOLID, coupling/cohesion
 - `handler-naming`: `on*`, `handle*`, callback prop API naming
 - `page-layering`: page VM hook, `.core.ts`, `.utils.ts`, UI/state/pure logic layering
+- `react-quality-lens`: 내부 React Quality Lens. 외부 doctor 도구 없이 correctness, hooks/effects, state model, responsibility, performance, accessibility, type safety, testability를 함께 점검
 - `final-reviewer`: 중복 의견 병합 및 우선순위 정리
+
+## `react-upgrade-workflow`
+
+기존 React/TypeScript 코드를 동작 보존 전제로 고도화하는 스킬입니다. 새 기능 구현보다는 state/effect cleanup, responsibility split, pure logic extraction, rendering boundary, 접근성, 타입 안정성, 테스트 가능성 개선에 초점을 둡니다.
+
+### 언제 쓰면 좋은가
+
+- `useEffect` 오남용이나 derived state를 정리하고 싶을 때
+- 컴포넌트가 API 호출, mapping, validation, rendering을 과하게 함께 들고 있을 때
+- hook 안의 pure business logic을 테스트 가능한 `.ts` 함수로 빼고 싶을 때
+- 리렌더링 위험을 점검하되 무분별한 `useMemo`/`useCallback`은 피하고 싶을 때
+- 외부 doctor/npm package 없이 내부 React Quality Lens 기준으로 개선하고 싶을 때
+
+### 기본 사용 패턴
+
+```text
+$react-upgrade-workflow로 src/features/payment/components/PaymentForm.tsx를 고도화해줘.
+
+목표:
+- useEffect 오남용 제거
+- derived state 정리
+- 순수 로직 분리
+- 테스트 가능성 개선
+
+조건:
+- 동작 변경 금지
+- 관련 최소 파일만 수정
+- useMemo/useCallback은 근거가 있을 때만 사용
+- 수정 후 typecheck/test/lint 중 가능한 검증 실행
+```
 
 ## 추천 workflow
 
@@ -242,6 +281,11 @@ $react-ai-reviewer로 방금 리뷰한 내용 중 1번, 3번만 반영해줘.
 1. `business-feature-builder`로 요구사항, skeleton, 책임 분리, 구현, 테스트를 진행
 2. Figma 해석이 필요한 부분은 `create-component-from-figma`를 보조적으로 활용
 3. 구현 후 `react-ai-reviewer`로 final review
+
+기존 코드 고도화 작업인 경우:
+
+1. `react-upgrade-workflow`로 상태/effect/책임 분리/테스트 가능성 개선
+2. 필요하면 `react-ai-reviewer`의 `react-quality-lens` 기준으로 최종 리뷰
 
 디자인 시스템 작업인 경우:
 
@@ -255,3 +299,4 @@ $react-ai-reviewer로 방금 리뷰한 내용 중 1번, 3번만 반영해줘.
 - [create-component-from-figma SKILL](skills/create-component-from-figma/SKILL.md)
 - [gds-generator SKILL](skills/gds-generator/SKILL.md)
 - [react-ai-reviewer SKILL](skills/react-ai-reviewer/SKILL.md)
+- [react-upgrade-workflow SKILL](skills/react-upgrade-workflow/SKILL.md)

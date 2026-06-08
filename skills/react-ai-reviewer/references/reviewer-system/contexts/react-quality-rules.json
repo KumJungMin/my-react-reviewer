@@ -1,0 +1,43 @@
+{
+  "focus": [
+    "correctness",
+    "hooks and effects",
+    "state model",
+    "component responsibility",
+    "rendering performance",
+    "accessibility",
+    "type safety",
+    "testability"
+  ],
+  "ignore": [
+    "useMemo or useCallback recommendations without a concrete reason",
+    "folder restructuring without clear maintenance benefit",
+    "component splitting based only on file length",
+    "generic test requests without named behavior",
+    "abstractions for one-off code",
+    "external diagnostic tool installation"
+  ],
+  "severityHints": {
+    "critical": [
+      "hook rules are violated",
+      "user-provided HTML is rendered without a sanitization boundary"
+    ],
+    "high": [
+      "direct state mutation can break React rendering",
+      "async effect can update state after unmount",
+      "external subscription, timer, observer, socket, or listener has no cleanup",
+      "non-semantic interactive element lacks keyboard support"
+    ],
+    "medium": [
+      "duplicated derived state can become stale",
+      "component mixes rendering, orchestration, mapping, validation, and policy",
+      "pure business logic inside a hook is difficult to test",
+      "API DTO shape leaks deeply into UI components"
+    ],
+    "low": [
+      "extraction improves readability but current behavior is low risk",
+      "naming obscures intent but does not affect behavior",
+      "optional test coverage would help future changes"
+    ]
+  }
+}

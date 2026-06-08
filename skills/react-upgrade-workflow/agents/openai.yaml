@@ -1,0 +1,4 @@
+interface:
+  display_name: "React Upgrade Workflow"
+  short_description: "Improve existing React code with internal quality rules"
+  default_prompt: "Use $react-upgrade-workflow to improve this existing React code without external doctor tools, preserving behavior and verifying with the relevant checks."
