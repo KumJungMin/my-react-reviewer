@@ -104,7 +104,7 @@ Use this priority:
 
 ### 4. Plan
 
-Before editing, create a minimal refactor plan.
+Before editing, create a minimal refactor plan. For non-trivial work, present this plan as the design and implementation list required by the shared work principles, then wait for explicit confirmation before editing.
 
 The plan must state:
 
@@ -116,7 +116,7 @@ The plan must state:
 
 ### 5. Refactor
 
-Apply changes in small, safe steps.
+After confirmation for non-trivial work, apply changes in small, safe steps.
 
 Rules:
 

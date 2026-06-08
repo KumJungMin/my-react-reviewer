@@ -22,7 +22,7 @@ Do not use this skill for a narrow one-skill request that does not need batching
 1. Classify the request and select the minimal set of controlled skills.
 2. Run deterministic preflight scripts before broad source reading when a relevant script exists.
 3. Produce a design and implementation list before major edits, then wait for explicit user confirmation for non-trivial work.
-4. Execute one work unit at a time, keeping each commit near 300 changed lines when commits are requested or implied by the workflow.
+4. Execute one work unit at a time under the batch and commit rules in `references/shared-work-principles.md`.
 5. Validate each work unit with the narrowest useful checks.
 6. Use `react-ai-reviewer` for final review when the task changes React behavior, hooks, page structure, design-system API, or tests.
 7. Finish with the implementation list status, commits created, validation results, and any remaining risks.
@@ -71,30 +71,9 @@ Load `references/commit-and-agreement.md` when the task involves commits, more t
 
 ## Commit Discipline
 
-When committing is requested or implied:
+When committing is requested or implied, follow the canonical batch and commit message contract in `references/shared-work-principles.md`.
 
-- One commit should represent one coherent purpose.
-- Target roughly 300 changed lines per commit. Treat 150-400 changed lines as the normal band.
-- Split large work by durable boundaries: skeleton/contracts, pure core logic, hook orchestration, UI sections, tests, docs, review fixes.
-- Check `git diff --shortstat` or `git diff --numstat` before committing.
-- Stage only files belonging to the current work unit.
-- Do not hide unrelated working tree changes inside a workflow commit.
-- If a commit must exceed the target size because the change is mechanical or generated, explain that in the commit body.
-
-Commit messages must include purpose and direction:
-
-```text
-<imperative subject>
-
-Purpose:
-- <why this commit exists>
-
-Direction:
-- <how the change moves the implementation forward>
-
-Validation:
-- <commands run, or not run with reason>
-```
+Use `references/commit-and-agreement.md` for work-unit examples, agreement checklist, and per-unit commit gate details.
 
 ## Reporting
 

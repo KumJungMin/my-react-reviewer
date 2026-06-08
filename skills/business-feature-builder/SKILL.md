@@ -44,16 +44,17 @@ Use `.business-feature-builder/feature-context.md` to choose the smallest files 
 ## Required Flow
 
 1. Analyze requirements and identify inputs, outputs, state, side effects, and edge cases.
-2. Create function, handler, hook, and component signatures before filling behavior. Add concise TODO comments inside the empty bodies describing what must be implemented.
-3. Separate responsibilities before implementation:
+2. For non-trivial work, present the design and implementation list required by the shared work principles, then wait for explicit confirmation before editing.
+3. Create function, handler, hook, and component signatures before filling behavior. Add concise TODO comments inside the empty bodies describing what must be implemented.
+4. Separate responsibilities before implementation:
    - `{Component}.tsx`: JSX, layout, presentational composition, and child components.
    - `use{Component}.tsx`: React state, event handlers, lifecycle, navigation, async orchestration, validation flow, derived state, and submit flow.
    - `.core.ts` or `.utils.ts`: pure calculations, mapping, validation, formatting, policy, and functions that do not need React.
-4. For page-level work, apply the Page Assembly Structure rules before adding local `render*` helpers.
-5. Implement the TODO bodies after the skeleton is in place. Do not stop at skeleton unless the user explicitly asks for scaffolding only.
-6. Split UI by role, rerender boundary, performance, and readability. Avoid meaningless over-splitting.
-7. Generate or update tests from the requirements. Cover normal flow, validation, failure/error, loading/disabled states, and meaningful edge cases.
-8. Run relevant validation and report exact commands and results.
+5. For page-level work, apply the Page Assembly Structure rules before adding local `render*` helpers.
+6. Implement the TODO bodies after the skeleton is in place. Do not stop at skeleton unless the user explicitly asks for scaffolding only.
+7. Split UI by role, rerender boundary, performance, and readability. Avoid meaningless over-splitting.
+8. Generate or update tests from the requirements. Cover normal flow, validation, failure/error, loading/disabled states, and meaningful edge cases.
+9. Run relevant validation and report exact commands and results.
 
 ## Page Assembly Structure
 

@@ -2,7 +2,7 @@
 
 Use this reference when the orchestrator coordinates multiple skills, creates multiple commits, or needs to explain work units to the user before editing.
 
-Also apply `shared-work-principles.md` for the global design confirmation gate, 300-line batch target, and commit message contract.
+The canonical design confirmation gate, 300-line batch target, and commit message contract live in `shared-work-principles.md`. This file adds work-unit examples and agreement checks only.
 
 ## Work Unit Design
 
@@ -17,27 +17,9 @@ A work unit should be something a reviewer can understand in isolation:
 
 Avoid mixing unrelated concerns such as API naming, UI layout, validation policy, and test rewrite in the same work unit unless the diff is small and inseparable.
 
-## 300-Line Commit Target
+## Commit Message Examples
 
-Use changed lines from `git diff --shortstat` or `git diff --numstat` as the practical signal.
-
-- Normal target: about 300 changed lines.
-- Healthy band: 150-400 changed lines.
-- Smaller commits are fine for risk reduction, public API changes, review fixes, or isolated tests.
-- Larger commits are acceptable only for mechanical moves, generated snapshots, lockfile churn, or one atomic refactor that would be less clear if split.
-
-When a work unit grows too large, split in this order:
-
-1. contracts, types, exports, and empty skeleton
-2. pure core or utility behavior
-3. hook/state/effect orchestration
-4. UI composition and style wiring
-5. tests
-6. review fixes and cleanup
-
-## Commit Message Template
-
-Use an imperative subject that describes the change, then include purpose and direction in the body.
+Use the canonical commit message contract from `shared-work-principles.md`. These examples show good purpose and direction wording for common React work units.
 
 ```text
 Add service intro page sections
@@ -97,12 +79,10 @@ If the user request, repository pattern, and skill rule disagree, do not silentl
 
 ## Per-Unit Gate
 
-Before each commit:
+Before each commit, apply the canonical gate from `shared-work-principles.md` and also confirm:
 
-1. Inspect `git status --short`.
-2. Inspect staged files and confirm they match the work unit.
-3. Check changed-line size with `git diff --shortstat --staged`.
-4. Run the narrow validation command when feasible.
-5. Commit with the message template.
+1. Staged files match the current work unit.
+2. The diff is understandable as one reviewer-visible change.
+3. The validation result is recorded in the commit body.
 
 After each commit, continue to the next implementation list item unless the command failed or the user asked to pause between commits.

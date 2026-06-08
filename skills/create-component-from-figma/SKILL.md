@@ -41,13 +41,14 @@ If those are missing, ask concise follow-up questions before editing.
 1. Inspect existing `components/ui`, tokens, shared utilities, and nearby feature folders first.
 2. If the user provided a Figma URL or node-id, use the available Figma implementation skill and tools to extract the design structure. Treat generated code as reference, not final output.
 3. Infer component boundaries, layout, state model, responsive behavior, and accessibility requirements from the design plus repository conventions.
-4. Choose the simplest architecture that fits the interaction complexity:
+4. For non-trivial implementation, present the design and implementation list required by the shared work principles, then wait for explicit confirmation before editing.
+5. Choose the simplest architecture that fits the interaction complexity:
    - direct component for presentational UI
    - headless hook for non-trivial interaction logic
    - compound API only when multiple coordinated subparts genuinely need it
-5. Implement with React + TypeScript and Vanilla Extract only. Reuse existing primitives, tokens, utilities, and patterns before introducing new abstractions.
-6. Cover meaningful states and edge cases that are required by the component, even if the mockup shows only one state.
-7. Run the relevant repository validation commands and report exact results.
+6. Implement with React + TypeScript and Vanilla Extract only. Reuse existing primitives, tokens, utilities, and patterns before introducing new abstractions.
+7. Cover meaningful states and edge cases that are required by the component, even if the mockup shows only one state.
+8. Run the relevant repository validation commands and report exact results.
 
 ## Preflight Script
 

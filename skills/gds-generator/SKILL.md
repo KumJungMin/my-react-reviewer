@@ -62,10 +62,11 @@ Use `.gds-generator/component-analysis.md` to inspect folder shape, public expor
 3. Inspect nearby GDS components and package exports.
 4. Design public props before editing. Prefer semantic props: `isDisabled`, `isInvalid`, `isLoading`, `startContent`, `endContent`, `variant`, `color`, `size`, `radius`.
 5. Decide the minimal architecture. Do not create hooks, context, class-contract files, or recipes unless their responsibility is real.
-6. Implement with thin rendering, separated behavior, token-based Vanilla Extract styles, explicit slots, and public-only exports.
-7. Update style-guide viewer docs/examples when public component behavior or props change.
-8. Add or update focused tests when a matching test pattern exists or the behavior is non-trivial.
-9. Run relevant validation, usually `npm run build -w @org/gds`, plus typecheck/build commands for changed docs/examples.
+6. For non-trivial implementation, present the design and implementation list required by the shared work principles, then wait for explicit confirmation before editing.
+7. Implement with thin rendering, separated behavior, token-based Vanilla Extract styles, explicit slots, and public-only exports.
+8. Update style-guide viewer docs/examples when public component behavior or props change.
+9. Add or update focused tests when a matching test pattern exists or the behavior is non-trivial.
+10. Run relevant validation, usually `npm run build -w @org/gds`, plus typecheck/build commands for changed docs/examples.
 
 ## Final Response
 

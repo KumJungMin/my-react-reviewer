@@ -257,6 +257,7 @@ If the request is a quick single-file review without a diff, use only the minimu
 
 - Assume there was a prior review.
 - If the selected items are ambiguous, ask which item numbers or titles to apply.
+- For non-trivial selected fixes, present the design and implementation list required by the shared work principles, then wait for explicit confirmation before editing.
 - Edit only the requested items.
 - Do not expand the scope on your own.
 - After changes, explain:
@@ -269,7 +270,7 @@ If the request is a quick single-file review without a diff, use only the minimu
 
 - Use direct-fix only for review-driven fixes, explicitly selected review findings, or small corrective edits after a review pass.
 - Do not use direct-fix as the primary workflow for raw Figma-to-code work, business feature implementation, or design-system hardening.
-- Start with a short implementation plan.
+- Start with a short implementation plan. For non-trivial direct fixes, present it as the design and implementation list required by the shared work principles, then wait for explicit confirmation before editing.
 - Edit the minimum necessary files.
 - Keep the work tightly scoped to the user's stated goals.
 - If JSX decomposition is requested or clearly needed, apply it only when it improves readability or responsibility boundaries under the JSX decomposition rules below.
