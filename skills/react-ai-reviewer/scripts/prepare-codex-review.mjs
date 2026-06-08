@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const skillRootDir = path.resolve(__dirname, "..");
-const repoRootDir = path.resolve(skillRootDir, "../..");
+let repoRootDir = process.cwd();
 const reviewerSystemRootDir = path.join(skillRootDir, "references", "reviewer-system");
 
 const DEFAULT_CONTEXT_FILE_CHARS = 8_000;
@@ -286,7 +286,7 @@ function selectReviewersByIds(selectedIds, reviewers) {
   return uniqueReviewers([...selectedReviewers, getFinalReviewer(reviewers)]).sort((left, right) => left.order - right.order);
 }
 
-function renderReviewBrief({ diffPath, changedFiles, selectedReviewers, contextFilePaths }) {
+function renderReviewBrief({ diffPath, astAnalysisPath, changedFiles, selectedReviewers, contextFilePaths }) {
   const reviewerLines = selectedReviewers.map((reviewer) =>
     [
       `- \`${reviewer.id}\` - ${reviewer.title}`,
@@ -304,6 +304,14 @@ function renderReviewBrief({ diffPath, changedFiles, selectedReviewers, contextF
     contextFilePaths.length > 0
       ? contextFilePaths.map((filePath) => `- \`${filePath}\``).join("\n")
       : "- no allowlisted project context files were found";
+
+  const astAnalysisLines = astAnalysisPath
+    ? [
+        `- AST preflight report: \`${toDisplayPath(astAnalysisPath)}\``,
+        "- Treat AST signals as deterministic candidate locations, not final review findings.",
+        "- Read this report before opening whole changed files so source inspection can stay line-focused.",
+      ].join("\n")
+    : "- no AST preflight report provided";
 
   return [
     "# React AI Reviewer Codex Brief",
@@ -333,6 +341,10 @@ function renderReviewBrief({ diffPath, changedFiles, selectedReviewers, contextF
     `- diff file: \`${toDisplayPath(diffPath)}\``,
     changedFileLines,
     "",
+    "## AST Preflight",
+    "",
+    astAnalysisLines,
+    "",
     "## Selected Review Lenses",
     "",
     reviewerLines.join("\n"),
@@ -343,11 +355,12 @@ function renderReviewBrief({ diffPath, changedFiles, selectedReviewers, contextF
     "",
     "## Expected Review Flow",
     "",
-    "1. 선택된 reviewer prompt, compressed context, rules를 읽는다.",
-    "2. 바로 수정하지 말고 단계별 리뷰를 먼저 작성한다.",
-    "3. 사용자가 반영할 항목을 고르면 그 범위만 수정한다.",
-    "4. 수정 후에는 무엇을 반영했고 무엇을 보류했는지 요약한다.",
-    "5. 필요하면 `.react-ai-reviewer/prompt-feedback.md`에 다음 세션 개선 포인트를 남긴다.",
+    "1. AST preflight report가 있으면 먼저 읽고 candidate line만 source로 검증한다.",
+    "2. 선택된 reviewer prompt, compressed context, rules를 읽는다.",
+    "3. 바로 수정하지 말고 단계별 리뷰를 먼저 작성한다.",
+    "4. 사용자가 반영할 항목을 고르면 그 범위만 수정한다.",
+    "5. 수정 후에는 무엇을 반영했고 무엇을 보류했는지 요약한다.",
+    "6. 필요하면 `.react-ai-reviewer/prompt-feedback.md`에 다음 세션 개선 포인트를 남긴다.",
     "",
     "## Recommended Response Shape",
     "",
@@ -380,6 +393,11 @@ function renderReviewBrief({ diffPath, changedFiles, selectedReviewers, contextF
 
 function main() {
   const flags = parseArgs(process.argv.slice(2));
+  const repoRootRaw = getStringFlag(flags, "repo");
+  if (repoRootRaw) {
+    repoRootDir = path.resolve(repoRootRaw);
+  }
+
   const diffFlag = getStringFlag(flags, "diff");
 
   if (!diffFlag) {
@@ -387,7 +405,9 @@ function main() {
   }
 
   const reviewersRaw = getStringFlag(flags, "reviewers");
+  const astAnalysisRaw = getStringFlag(flags, "ast-analysis");
   const diffPath = resolveWorkspacePath(diffFlag);
+  const astAnalysisPath = astAnalysisRaw ? resolveWorkspacePath(astAnalysisRaw) : null;
   const outputPath =
     typeof flags.get("out") === "string"
       ? resolveWorkspacePath(flags.get("out"))
@@ -400,6 +420,10 @@ function main() {
     : null;
 
   const diff = fs.readFileSync(diffPath, "utf8");
+  if (astAnalysisPath && !fs.existsSync(astAnalysisPath)) {
+    throw new Error(`AST analysis file not found: ${astAnalysisPath}`);
+  }
+
   const changedFiles = extractChangedFilesFromDiff(diff);
   const contextFilePaths = collectRepositoryContext(repoRootDir).map((file) => file.path);
   const reviewerCatalog = loadReviewerCatalog();
@@ -419,6 +443,7 @@ function main() {
       changedFiles,
       selectedReviewerIds: selectedReviewers.map((reviewer) => reviewer.id),
       contextFilePaths,
+      astAnalysisPath: astAnalysisPath ? toDisplayPath(astAnalysisPath) : null,
     }),
   );
 
@@ -426,6 +451,7 @@ function main() {
     outputPath,
     renderReviewBrief({
       diffPath,
+      astAnalysisPath,
       changedFiles,
       selectedReviewers,
       contextFilePaths,

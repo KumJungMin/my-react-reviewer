@@ -208,6 +208,17 @@ React, TSX, JSX, hooks, component tests, 주변 frontend code를 구조적으로
 - `apply-selected-items`: 리뷰한 항목 중 선택한 것만 반영
 - `direct-fix`: 리뷰 기반의 작은 수정 수행
 
+### AST preflight
+
+AI가 전체 diff를 먼저 읽기 전에, 로컬 AST 분석으로 hook/effect/state/JSX/accessibility/layering 후보 위치를 압축할 수 있습니다. 이 단계는 AI 판단이 아니라 deterministic syntax signal입니다.
+
+```bash
+node skills/react-ai-reviewer/scripts/analyze-react-ast.mjs --repo . --diff pr.diff
+node skills/react-ai-reviewer/scripts/prepare-codex-review.mjs --repo . --diff pr.diff --ast-analysis .react-ai-reviewer/ast-analysis.md
+```
+
+대상 프로젝트에 이미 설치된 `typescript` 패키지를 사용합니다. 패키지를 설치하거나 외부 scanner를 호출하지 않습니다.
+
 ### 기본 사용 패턴
 
 ```text

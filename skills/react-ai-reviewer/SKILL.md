@@ -22,6 +22,7 @@ This skill keeps the original reviewer system under `references/reviewer-system/
 - reviewer contexts and rules: `references/reviewer-system/contexts/`
 - supporting docs: `references/reviewer-system/docs/`
 - deterministic brief generator: `scripts/prepare-codex-review.mjs`
+- deterministic AST preflight analyzer: `scripts/analyze-react-ast.mjs`
 
 Internal React Quality Lens is bundled as a project-owned reviewer:
 
@@ -101,6 +102,43 @@ Avoid noisy advice:
 - When reviewing security-sensitive code, inspect only the source files required for the task.
 - Prefer internal markdown-based review rules over external scanners.
 
+## AST Preflight
+
+Use AST preflight when the user wants token-saving review, diff-based review, hook/effect diagnosis, or "doctor-style" narrowing before AI reasoning.
+
+The AST preflight is deterministic. It produces syntax facts and candidate signals only; it is not a final review and must not be treated as proof of a bug.
+
+It checks for:
+
+- hook call placement and effect dependency/cleanup signals
+- `useState` declarations, setter calls inside effects, and direct state mutation syntax
+- JSX accessibility signals such as non-interactive click handlers, missing `button type`, missing `img alt`, and `dangerouslySetInnerHTML`
+- context provider inline value syntax
+- presentation-layer imports from API/repository/service/domain-like modules
+- component/hook/function metrics such as lines, hook count, effect count, JSX count, and branch count
+
+The script loads the target repository's installed `typescript` package. Do not install packages just to run it unless the user explicitly asks. If `typescript` is unavailable, skip AST preflight and say so.
+
+For a diff-based review, run AST preflight before generating the Codex review brief:
+
+```bash
+node skills/react-ai-reviewer/scripts/analyze-react-ast.mjs --repo . --diff pr.diff
+node skills/react-ai-reviewer/scripts/prepare-codex-review.mjs --repo . --diff pr.diff --ast-analysis .react-ai-reviewer/ast-analysis.md
+```
+
+For a single file or folder:
+
+```bash
+node skills/react-ai-reviewer/scripts/analyze-react-ast.mjs --repo . --target src/features/cart/CartPanel.tsx
+```
+
+When using AST preflight:
+
+- Read `.react-ai-reviewer/ast-analysis.md` before opening whole source files.
+- Open only the reported file and nearby line windows first.
+- Verify semantics before promoting any AST signal to `Must fix` or `Should fix`.
+- Use the JSON output only when the markdown summary is insufficient.
+
 ## Modes
 
 Choose one of these three modes:
@@ -142,11 +180,12 @@ If the user gives only a file path, ask:
 When the user wants a diff-based review, preserve the original stages:
 
 1. load diff
-2. extract changed files
-3. select matching reviewers from `reviewers.config.json`
-4. load selected reviewer prompts, compressed contexts, and rules
-5. produce a Codex review brief
-6. review first, edit only after the user selects items
+2. run AST preflight when available and useful
+3. extract changed files
+4. select matching reviewers from `reviewers.config.json`
+5. load selected reviewer prompts, compressed contexts, and rules
+6. produce a Codex review brief
+7. review first, edit only after the user selects items
 
 Use the deterministic script when that flow helps:
 
