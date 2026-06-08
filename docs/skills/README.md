@@ -11,6 +11,34 @@
 - 커밋 메시지는 `Purpose`, `Direction`, `Validation`을 포함합니다.
 - 검증은 각 work unit마다 가능한 가장 좁은 명령으로 실행합니다.
 
+## 마스터 스킬이란
+
+아래 대원칙은 모든 스킬이 공통으로 따르는 작업 원칙입니다. `react-workflow-orchestrator`는 이 공통 원칙을 여러 스킬이 함께 쓰는 작업에서 조율하는 마스터 스킬입니다. 직접 모든 코드를 구현하는 스킬이라기보다, 작업을 이해 가능한 단위로 나누고 각 단위에 맞는 하위 스킬을 배정합니다.
+
+모든 스킬이 공유하는 대원칙:
+
+- 작업 전 설계와 구현 리스트 만들기
+- 커밋을 300 changed lines 내외의 reviewable batch로 나누기
+- 커밋 메시지에 `Purpose`, `Direction`, `Validation` 남기기
+- 각 단계별 검증 실행하기
+
+마스터 스킬이 추가로 총괄하는 것:
+
+- 어떤 스킬이 어떤 work unit을 맡을지 정하기
+- 여러 work unit의 순서와 커밋 경계 조정하기
+- 마지막 review 연결하기
+- 하위 스킬 규칙이 충돌할 때 하나의 방향으로 합의하기
+
+마스터 스킬이 직접 대신하지 않는 것:
+
+- Figma 해석 세부 판단은 `create-component-from-figma`가 맡습니다.
+- 비즈니스 기능 구현 세부 판단은 `business-feature-builder`가 맡습니다.
+- design-system API와 slot 구조 판단은 `gds-generator`가 맡습니다.
+- 기존 코드 refactor 판단은 `react-upgrade-workflow`가 맡습니다.
+- 코드 품질 리뷰 판단은 `react-ai-reviewer`가 맡습니다.
+
+헷갈리면 먼저 `react-workflow-orchestrator`를 쓰면 됩니다. 작업이 충분히 작다면 마스터 스킬이 하위 스킬 하나만 쓰는 흐름으로 정리해줍니다.
+
 ## 어떤 스킬을 써야 하나
 
 | 상황 | 먼저 쓸 스킬 | 이유 |
