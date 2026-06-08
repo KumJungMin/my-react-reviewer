@@ -9,6 +9,7 @@
 - Figma-generated UI를 design-system-quality component로 강화할 때
 - `packages/design-system/src/components/**`를 수정할 때
 - public prop naming, alias/deprecation, slot contract를 정리해야 할 때
+- `List.Item` 같은 namespace-style compound component API가 필요할 때
 - `useComponent`, `component-core.ts`, `component.css.ts`, docs/examples/tests가 필요한 때
 - package export까지 같이 정리해야 할 때
 
@@ -24,6 +25,7 @@ $gds-generator로 [컴포넌트 이름]을 개선해줘.
 - public prop naming 정리
 - accessibility 보완
 - loading/disabled/invalid 상태 정리
+- compound API는 `List.Item` 형식으로 노출
 - style-guide 예제 업데이트
 - 테스트 추가
 
@@ -44,10 +46,11 @@ $gds-generator로 [컴포넌트 이름]을 개선해줘.
 2. 필요한 reference만 읽습니다.
 3. 근처 design-system component와 package export를 확인합니다.
 4. public props와 slot 구조를 먼저 설계합니다.
-5. 비사소한 작업이면 설계와 구현 리스트를 먼저 제시합니다.
-6. rendering은 얇게 유지하고 behavior, core logic, style contract를 분리합니다.
-7. docs/examples/tests/exports를 필요한 만큼 갱신합니다.
-8. build, typecheck, test 등 관련 검증을 실행합니다.
+5. compound component가 필요하면 `compounds/` 구조와 `{Main}.{Compound}` public API를 먼저 설계합니다.
+6. 비사소한 작업이면 설계와 구현 리스트를 먼저 제시합니다.
+7. rendering은 얇게 유지하고 behavior, core logic, style contract를 분리합니다.
+8. docs/examples/tests/exports를 필요한 만큼 갱신합니다.
+9. build, typecheck, test 등 관련 검증을 실행합니다.
 
 ## 기대 효과
 
@@ -55,6 +58,7 @@ $gds-generator로 [컴포넌트 이름]을 개선해줘.
 | --- | --- |
 | 컴포넌트 API가 화면 구현에 끌려간다. | semantic public API와 slot contract가 먼저 정리된다. |
 | 상태별 접근성과 class contract가 불명확하다. | disabled, invalid, loading, slot 상태가 일관되게 표현된다. |
+| compound subcomponent가 `ListItem`처럼 독립 public API로 새어 나온다. | consumer API는 `List.Item`처럼 main component namespace 아래에 정리된다. |
 | 구현만 바뀌고 docs/examples가 뒤처진다. | public behavior 변경 시 문서와 예제가 함께 갱신된다. |
 | package export 누락이 뒤늦게 발견된다. | exports와 style-guide 연결까지 작업 범위에 포함된다. |
 

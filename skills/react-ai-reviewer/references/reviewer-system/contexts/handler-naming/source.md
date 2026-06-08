@@ -37,6 +37,8 @@ design-system component API는 call site에서 의미와 목적이 보여야 한
 - open/visibility 제어는 `open`, `defaultOpen`, `onOpenChange(open)`를 쓴다. `onClose`는 닫힘 요청만 알리는 convenience callback일 때 유지한다.
 - Horizontal slot은 `startContent/endContent`, vertical slot은 `topContent/bottomContent`를 쓴다. `left/right`, `prefix/suffix`, `topAccessory/bottomAccessory`는 legacy alias로만 둔다.
 - Styling choice는 `variant`를 우선한다. `color`, `tone`, `size`처럼 다른 개념을 설명하는 이름은 허용하지만, 새 styling API에 `type`, `designType`, `buttonStyle`을 쓰지 않는다.
+- Compound component는 call site에서 `List.Item`, `Tabs.Panel`, `Select.Option` 같은 `{Main}.{Compound}` 형식을 선호한다. `ListItem` 같은 별도 public export는 subcomponent가 main component 밖에서도 독립적으로 의미 있을 때만 허용한다.
+- Compound subcomponent 구현 파일은 `compounds/ListItem.tsx`처럼 둘 수 있지만, docs, examples, public usage는 `List.Item` 형식을 우선한다.
 - Compatibility alias가 필요한 migration에서는 canonical prop이 alias보다 우선해야 한다. 새 docs, examples, tests, public usage는 canonical 이름만 사용한다.
 
 ## Internal Event Adapter

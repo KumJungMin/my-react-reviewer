@@ -9,6 +9,9 @@ Use this target shape, adapted to the repository's existing naming:
 ```txt
 packages/design-system/src/components/component-name/
 ├─ Component.tsx
+├─ compounds/
+│  ├─ ComponentItem.tsx        # only for namespace-style compound APIs
+│  └─ index.ts                 # barrel export for compound subcomponents
 ├─ useComponent.ts              # only for interactive or behavior-heavy components
 ├─ ComponentContext.tsx         # only for compound/group state
 ├─ Component.types.ts
@@ -30,6 +33,35 @@ Current GDS folders are kebab-case and use files such as `Button.tsx`, `Button.t
 - `Component.types.ts`: public prop types and exported aliases. Internal hook props can live here when they are small and useful.
 - `ComponentContext.tsx`: group or compound component shared state. Do not create context for values used by only one component.
 - `index.ts`: public API boundary. Export only intended public components, types, and stable class/slot contracts.
+
+## Compound Component Rules
+
+Use compound components only when the subcomponent is meaningful as part of the main component's API contract. Examples include `List.Item`, `Tabs.Panel`, `Select.Option`, `Accordion.Item`, and `RadioGroup.Radio`.
+
+Structure:
+
+```txt
+packages/design-system/src/components/list/
+├─ List.tsx
+├─ List.types.ts
+├─ list.css.ts
+├─ compounds/
+│  ├─ ListItem.tsx
+│  └─ index.ts
+└─ index.ts
+```
+
+Rules:
+
+- Put compound subcomponents under `compounds/`.
+- Add `compounds/index.ts` as the barrel export for compound subcomponents.
+- Expose the public API through namespace-style composition: `List.Item`, `Tabs.Panel`, `Select.Option`.
+- Prefer `{Main}.{Compound}` at the call site over separate public names.
+- Best: `List`, `List.Item`.
+- Bad: `List`, `ListItem`.
+- Keep the main component folder `index.ts` as the public boundary. It should assemble or expose the namespace API intentionally instead of leaking every internal compound file.
+- A compound subcomponent may have an internal file name such as `ListItem.tsx`, but public docs, examples, and consumer usage should prefer `List.Item`.
+- Do not create a compound API when the subcomponent is useful independently outside the main component. In that case, make it a normal public component with its own folder and export.
 
 ## Public API Rules
 

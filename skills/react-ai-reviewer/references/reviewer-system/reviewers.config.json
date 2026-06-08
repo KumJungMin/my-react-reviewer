@@ -78,7 +78,7 @@
       "excludeFilePatterns": [],
       "triggers": {
         "filePatterns": [],
-        "keywords": ["handler", "handle", "callback", "onClick", "onChange", "onPress", "onOpenChange", "onValueChange", "onCheckedChange", "onSelectionChange", "onSelectedItemChange", "onSubmit", "onClose", "onSelect", "isInvalid", "hasError", "invalid", "startContent", "endContent", "topContent", "bottomContent", "variant", "designType", "buttonStyle", "alias", "deprecation", "public API", "HeroUI", "MUI"]
+        "keywords": ["handler", "handle", "callback", "onClick", "onChange", "onPress", "onOpenChange", "onValueChange", "onCheckedChange", "onSelectionChange", "onSelectedItemChange", "onSubmit", "onClose", "onSelect", "isInvalid", "hasError", "invalid", "startContent", "endContent", "topContent", "bottomContent", "variant", "designType", "buttonStyle", "alias", "deprecation", "public API", "HeroUI", "MUI", "compound", "compounds", "namespace", "List.Item", "ListItem"]
       }
     },
     {

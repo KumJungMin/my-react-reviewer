@@ -10,6 +10,7 @@
 - controlled state callback은 `value + onValueChange`, `open + onOpenChange`, `selectedItem + onSelectedItemChange`처럼 상태 이름을 기준으로 표현하는지 본다.
 - `Click`, `Change`, `Press` 같은 이벤트 단어가 public prop에 붙어 외부 계약을 DOM 이벤트에 과하게 묶는지 확인한다.
 - design-system public API에서는 HeroUI/MUI식 의미 중심 이름(`isInvalid`, `onValueChange`, `startContent/endContent`, `variant`)을 우선하고 legacy alias가 canonical prop보다 앞서지 않는지 본다.
+- design-system compound component는 `List.Item`, `Tabs.Panel`, `Select.Option`처럼 namespace-style public API를 쓰는지, `ListItem` 같은 별도 public name이 불필요하게 새지 않는지 본다.
 
 ## 응답 방식
 
@@ -39,4 +40,5 @@
 - Boolean state props는 `isInvalid`, `isDisabled`, `isLoading`, `isRounded`, `hasNotification`, `hasHomeIndicator`처럼 읽히는 이름을 선호한다. `hasError`/`invalid`는 migration alias로만 둔다.
 - Slot props는 `startContent/endContent`, vertical slot은 `topContent/bottomContent`를 선호한다. `left/right`, `prefix/suffix`, `topAccessory/bottomAccessory`는 legacy alias로 취급한다.
 - Styling choice는 `variant`를 우선한다. `type`, `designType`, `buttonStyle`은 새 public API로 만들지 않는다.
+- Compound component는 call site에서 `List.Item` 같은 `{Main}.{Compound}` 형식을 선호한다. `ListItem` 같은 별도 public export는 subcomponent가 main component 밖에서도 독립적으로 의미 있을 때만 허용한다.
 - canonical prop과 alias가 함께 들어오면 canonical prop이 우선해야 한다.

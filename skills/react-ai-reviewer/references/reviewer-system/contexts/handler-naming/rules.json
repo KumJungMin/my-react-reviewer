@@ -4,7 +4,8 @@
     "component-local event adapter names",
     "controlled state callback names",
     "domain action names vs UI event handlers",
-    "design-system public API naming and alias precedence"
+    "design-system public API naming and alias precedence",
+    "design-system compound component namespace API"
   ],
   "ignore": [
     "style-only naming preferences",
@@ -20,7 +21,8 @@
     "medium": [
       "callback prop names couple an app-level event API to a DOM event and the component already supports or is likely to support multiple interaction paths",
       "internal functions mix domain actions and event adapter responsibilities in a way that hides where behavior should change",
-      "a design-system component introduces a legacy-style public prop where an established canonical prop exists, or an alias overrides the canonical prop"
+      "a design-system component introduces a legacy-style public prop where an established canonical prop exists, or an alias overrides the canonical prop",
+      "a design-system compound subcomponent is exposed as a separate public name even though it only makes sense under the main component namespace"
     ],
     "low": [
       "renaming improves consistency and scanability but current behavior and API risk are limited"

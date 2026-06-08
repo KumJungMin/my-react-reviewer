@@ -55,6 +55,7 @@ Design-system public API naming and alias policy is part of the handler naming l
 - Controlled open/visibility state uses `open`, `defaultOpen`, and `onOpenChange(open)`. `onClose` may remain as a close-request convenience API when the component already exposes it.
 - Horizontal slots use `startContent` and `endContent`; vertical slots use `topContent` and `bottomContent`. Treat `left`, `right`, `prefix`, `suffix`, `topAccessory`, and `bottomAccessory` as legacy aliases for new public APIs.
 - Styling choices use `variant` first, with specific names such as `color`, `tone`, or `size` only when they describe a different concept. Avoid new `type`, `designType`, or `buttonStyle` props for styling variants.
+- Compound component APIs should prefer namespace-style usage such as `List.Item`, `Tabs.Panel`, or `Select.Option`. Flag new separate public names such as `ListItem` when the subcomponent only makes sense under the main component.
 - Compatibility aliases may stay during migration, but the canonical prop must win when both are provided. New examples, docs, tests, and public usage should use only canonical names.
 
 Page and design-system layering has a dedicated reviewer context:
@@ -366,3 +367,4 @@ Treat these as the three supported command templates:
 - For handler naming, do not raise style-only nits. Only flag names when they blur API contracts, hide whether a function is a DOM event adapter vs. domain action, or make future interaction changes harder.
 - Prefer `on*` for external callback props, `handle*` for component-local event adapters, `on[State]Change` for controlled state callbacks, and business verbs without `handle` for domain/usecase actions.
 - For design-system public APIs, prefer canonical HeroUI-style names (`isInvalid`, `onValueChange`, `startContent`, `endContent`, `variant`) and allow legacy aliases only as migration shims where canonical props take precedence.
+- For design-system compound components, prefer namespace-style APIs such as `List.Item` over separate public exports such as `ListItem` when the subcomponent is not useful outside the main component.

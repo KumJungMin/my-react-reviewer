@@ -53,6 +53,7 @@ Use `.gds-generator/component-analysis.md` to inspect folder shape, public expor
 - Keep pure normalization and policy in `component-core.ts` when it can be tested without React rendering.
 - Use Material UI-style slot, ownerState-like internal state, and stable class/slot contract concepts without copying MUI's runtime styling model.
 - Use HeroUI's Button as the mental model for button-like components: `useButton()` returns `Component`, `children`, `spinner`, `startContent`, `endContent`, `getButtonProps()`, and slot getter props; `Button.tsx` renders those pieces.
+- For compound components, expose namespace-style APIs such as `List.Item`, `Tabs.Panel`, or `Select.Option`. Prefer `{Main}.{Compound}` over separate public names such as `ListItem` when the subcomponent only makes sense under the main component.
 - Reuse existing repository utilities first. Do not add React Aria, ripple, classnames, or theme dependencies just because a reference library uses them.
 
 ## Workflow

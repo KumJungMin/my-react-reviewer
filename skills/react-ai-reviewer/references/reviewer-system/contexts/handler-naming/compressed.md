@@ -8,5 +8,6 @@
 - `onClose`는 닫힘 요청 callback이고, `onOpenChange`는 open 상태 변경 callback이다. 상태 제어 여부에 따라 다르게 판단한다.
 - `onSelect`는 선택 이벤트이고, `onSelectedItemChange`는 선택 상태 변경 callback이다.
 - design-system public API는 HeroUI/MUI식 의미 중심 이름을 우선한다: `isInvalid`, `onValueChange`, `startContent/endContent`, `topContent/bottomContent`, `variant`.
+- design-system compound component는 `List.Item`, `Tabs.Panel`, `Select.Option` 같은 namespace-style API를 선호한다. `ListItem` 같은 별도 public name은 subcomponent가 독립적으로 의미 있을 때만 허용한다.
 - legacy alias(`hasError`, `invalid`, `left/right`, `prefix/suffix`, `topAccessory/bottomAccessory`, `type`, `designType`, `buttonStyle`)는 migration shim으로만 두고 canonical prop이 항상 우선해야 한다.
 - 이름 지적은 스타일 취향이 아니라 레이어 책임, public API 계약, 미래 입력 방식 변경 비용에 영향이 있을 때만 남긴다.
