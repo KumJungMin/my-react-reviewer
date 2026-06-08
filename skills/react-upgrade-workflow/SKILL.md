@@ -17,6 +17,10 @@ Use this skill when the user asks for:
 - rendering performance review
 - accessibility or type-safety hardening in existing React code
 
+## Shared Work Principles
+
+Before non-trivial code-changing work, apply `../react-workflow-orchestrator/references/shared-work-principles.md` when available. This shared contract requires design confirmation before edits, reviewable batches around 300 changed lines, purpose/direction/validation commit messages, and per-unit validation.
+
 Do not use this skill for:
 
 - multi-skill workflow control, user-visible implementation lists, commit-sized batches, or purpose/direction commit messages: use `react-workflow-orchestrator`

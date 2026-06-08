@@ -7,6 +7,10 @@ description: "Translate Figma files, screenshots, mockups, and written UI descri
 
 Implement durable product code from design assets. Prioritize repository fit, semantics, accessibility, reusability, and maintainability before pixel fidelity.
 
+## Shared Work Principles
+
+Before non-trivial code-changing work, apply `../react-workflow-orchestrator/references/shared-work-principles.md` when available. This shared contract requires design confirmation before edits, reviewable batches around 300 changed lines, purpose/direction/validation commit messages, and per-unit validation.
+
 ## Routing
 
 - If the user asks for a multi-skill workflow, user-visible implementation list, commit-sized batches, or purpose/direction commit messages, use `skills/react-workflow-orchestrator` as the primary workflow and this skill as a controlled substep.

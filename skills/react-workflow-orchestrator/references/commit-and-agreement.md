@@ -2,6 +2,8 @@
 
 Use this reference when the orchestrator coordinates multiple skills, creates multiple commits, or needs to explain work units to the user before editing.
 
+Also apply `shared-work-principles.md` for the global design confirmation gate, 300-line batch target, and commit message contract.
+
 ## Work Unit Design
 
 A work unit should be something a reviewer can understand in isolation:

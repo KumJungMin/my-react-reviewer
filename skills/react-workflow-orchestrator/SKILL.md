@@ -21,15 +21,19 @@ Do not use this skill for a narrow one-skill request that does not need batching
 
 1. Classify the request and select the minimal set of controlled skills.
 2. Run deterministic preflight scripts before broad source reading when a relevant script exists.
-3. Produce an implementation list before major edits.
+3. Produce a design and implementation list before major edits, then wait for explicit user confirmation for non-trivial work.
 4. Execute one work unit at a time, keeping each commit near 300 changed lines when commits are requested or implied by the workflow.
 5. Validate each work unit with the narrowest useful checks.
 6. Use `react-ai-reviewer` for final review when the task changes React behavior, hooks, page structure, design-system API, or tests.
 7. Finish with the implementation list status, commits created, validation results, and any remaining risks.
 
+## Shared Principles
+
+Load `references/shared-work-principles.md` before non-trivial code-changing work. It is the shared contract for design confirmation, reviewable 300-line batches, purpose/direction commit messages, and per-unit validation across all React skills.
+
 ## Implementation List
 
-Before editing, post a concise implementation list as an update. Continue without waiting unless the list exposes a risky ambiguity or the user explicitly asked for approval first.
+Before editing, post a concise implementation list as an update. For non-trivial work, wait for explicit confirmation before editing unless the user explicitly says to skip confirmation.
 
 Each item must include:
 

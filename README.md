@@ -35,6 +35,8 @@ skills/
 
 각 폴더는 독립적인 Codex skill이며, `SKILL.md`의 frontmatter가 스킬 이름과 트리거 조건을 정의합니다. 자세한 절차와 판단 기준은 각 스킬의 `SKILL.md`와 필요한 `references/` 파일에 들어 있습니다.
 
+모든 React 작업 스킬은 `react-workflow-orchestrator/references/shared-work-principles.md`의 공통 원칙을 공유합니다. 비사소한 코드 변경은 먼저 설계와 구현 리스트를 제시해 확인받고, 작업/커밋은 약 300 changed lines 내외의 reviewable batch로 나누며, 커밋 메시지에는 `Purpose`, `Direction`, `Validation`을 남깁니다.
+
 ## Codex에 스킬 추가하기
 
 로컬에서 바로 개발하면서 쓰려면 `~/.codex/skills` 아래에 심볼릭 링크로 연결하는 방식이 가장 편합니다.
@@ -126,6 +128,7 @@ $react-workflow-orchestrator로 이 기능을 구현해줘.
 
 ### 제어 원칙
 
+- 비사소한 코드 변경은 먼저 설계와 구현 리스트를 제시하고 사용자 확인을 받은 뒤 편집한다
 - 구현 전에 `work unit`, 담당 스킬, 예상 파일, 검증 명령, 커밋 목적을 보여준다
 - 변경은 skeleton/contracts, core logic, hook orchestration, UI composition, tests, review fixes처럼 reviewable boundary로 나눈다
 - 커밋은 150-400 changed lines를 정상 범위로 보고, 초과 시 이유를 커밋 본문에 남긴다

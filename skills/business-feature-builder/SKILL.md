@@ -9,6 +9,10 @@ Use this skill for business feature implementation. Keep `react-ai-reviewer` rev
 
 Do not use this skill for design-system component architecture under `packages/design-system`; use `gds-generator` for that.
 
+## Shared Work Principles
+
+Before non-trivial code-changing work, apply `../react-workflow-orchestrator/references/shared-work-principles.md` when available. This shared contract requires design confirmation before edits, reviewable batches around 300 changed lines, purpose/direction/validation commit messages, and per-unit validation.
+
 ## Routing
 
 - If the user asks for a multi-skill workflow, user-visible implementation list, commit-sized batches, or purpose/direction commit messages, use `skills/react-workflow-orchestrator` as the primary workflow and this skill as a controlled substep.

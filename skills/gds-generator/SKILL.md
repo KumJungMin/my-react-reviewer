@@ -9,6 +9,10 @@ Use this skill for design-system component generation and meaningful design-syst
 
 If the user writes `gda-generator`, treat it as `gds-generator` unless they clearly mean a different skill.
 
+## Shared Work Principles
+
+Before non-trivial code-changing work, apply `../react-workflow-orchestrator/references/shared-work-principles.md` when available. This shared contract requires design confirmation before edits, reviewable batches around 300 changed lines, purpose/direction/validation commit messages, and per-unit validation.
+
 ## Routing
 
 - If the user asks for a multi-skill workflow, user-visible implementation list, commit-sized batches, or purpose/direction commit messages, use `skills/react-workflow-orchestrator` as the primary workflow and this skill as a controlled substep.

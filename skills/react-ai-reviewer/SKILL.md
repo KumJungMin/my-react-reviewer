@@ -9,6 +9,10 @@ Use this skill when the user wants a structured React review workflow instead of
 
 Use this as the final review step after `create-component-from-figma`, `business-feature-builder`, or `gds-generator` has produced changes.
 
+## Shared Work Principles
+
+Before non-trivial review-driven code changes, apply `../react-workflow-orchestrator/references/shared-work-principles.md` when available. This shared contract requires design confirmation before edits, reviewable batches around 300 changed lines, purpose/direction/validation commit messages, and per-unit validation. Review-only requests do not need edit confirmation because no code is changed.
+
 For multi-skill workflow control, user-visible implementation lists, commit-sized batches, or purpose/direction commit messages, use `skills/react-workflow-orchestrator` as the primary workflow and this skill as the final review substep.
 
 For design-system component generation, public API design, HeroUI-style component/hook splitting, or substantial changes under `packages/design-system`, use `skills/gds-generator` instead. This reviewer may review existing design-system code, but it should not be the primary workflow for generating or refactoring GDS components.
