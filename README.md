@@ -37,6 +37,8 @@ skills/
 
 모든 React 작업 스킬은 `react-workflow-orchestrator/references/shared-work-principles.md`의 공통 원칙을 공유합니다. 비사소한 코드 변경은 먼저 설계와 구현 리스트를 제시해 확인받고, 작업/커밋은 약 300 changed lines 내외의 reviewable batch로 나누며, 커밋 메시지에는 `Purpose`, `Direction`, `Validation`을 남깁니다.
 
+처음 사용하는 사람은 [React Skills Beginner Guide](docs/skills/README.md)를 먼저 보면 됩니다. 각 스킬별 역할, 요청 템플릿, 실제 동작, 기대 효과가 별도 문서로 정리되어 있습니다.
+
 ## Codex에 스킬 추가하기
 
 로컬에서 바로 개발하면서 쓰려면 `~/.codex/skills` 아래에 심볼릭 링크로 연결하는 방식이 가장 편합니다.
@@ -402,6 +404,7 @@ node skills/react-ai-reviewer/scripts/analyze-react-ast.mjs --repo . --target sr
 
 ## 참고 파일
 
+- [React Skills Beginner Guide](docs/skills/README.md)
 - [react-workflow-orchestrator SKILL](skills/react-workflow-orchestrator/SKILL.md)
 - [business-feature-builder SKILL](skills/business-feature-builder/SKILL.md)
 - [create-component-from-figma SKILL](skills/create-component-from-figma/SKILL.md)
