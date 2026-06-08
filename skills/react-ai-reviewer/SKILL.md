@@ -135,7 +135,7 @@ node skills/react-ai-reviewer/scripts/analyze-react-ast.mjs --repo . --target sr
 When using AST preflight:
 
 - Read `.react-ai-reviewer/ast-analysis.md` before opening whole source files.
-- Open only the reported file and nearby line windows first.
+- Open only the reported source windows and nearby line ranges first.
 - Verify semantics before promoting any AST signal to `Must fix` or `Should fix`.
 - Use the JSON output only when the markdown summary is insufficient.
 

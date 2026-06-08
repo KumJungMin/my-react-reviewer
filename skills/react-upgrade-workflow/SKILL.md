@@ -44,6 +44,16 @@ For non-trivial diagnosis, load the internal React Quality Lens from `skills/rea
 
 Load only the specific rules needed for the target. For small edits, inspect nearby code first and keep the lens as a checklist.
 
+## Preflight Script
+
+For non-trivial state/effect/responsibility diagnosis, run the shared React AST preflight first when the target project has TypeScript installed:
+
+```bash
+node skills/react-ai-reviewer/scripts/analyze-react-ast.mjs --repo . --target src/features/example/Example.tsx
+```
+
+Read `.react-ai-reviewer/ast-analysis.md` before opening whole source files. Use its source windows and signals as candidate locations to verify, not as final conclusions.
+
 ## Workflow
 
 ### 1. Inspect

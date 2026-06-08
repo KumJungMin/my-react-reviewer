@@ -5,6 +5,7 @@ import { createRequire } from "node:module";
 
 const DEFAULT_MAX_FILES = 200;
 const DEFAULT_MAX_SIGNALS = 120;
+const DEFAULT_WINDOW_RADIUS = 8;
 const SOURCE_FILE_PATTERN = /\.(tsx|ts|jsx|js)$/;
 const SKIP_PATH_PARTS = new Set([
   "node_modules",
@@ -58,6 +59,7 @@ Options:
   --out-md <path>               Markdown output. Defaults to .react-ai-reviewer/ast-analysis.md.
   --max-files <number>          Maximum source files to analyze. Defaults to ${DEFAULT_MAX_FILES}.
   --max-signals <number>        Maximum signals to include in markdown. Defaults to ${DEFAULT_MAX_SIGNALS}.
+  --window-radius <number>      Source lines before/after each signal. Defaults to ${DEFAULT_WINDOW_RADIUS}.
   --typescript-module <path>    Optional explicit path to a TypeScript module.
   --help                        Show this help.
 
@@ -865,7 +867,7 @@ function buildTotals(files) {
 }
 
 function buildReport({ repoRoot, source, files }) {
-  return {
+  const report = {
     version: 1,
     generatedAt: new Date().toISOString(),
     repoRoot,
@@ -873,6 +875,59 @@ function buildReport({ repoRoot, source, files }) {
     totals: buildTotals(files),
     files,
   };
+  report.sourceWindows = buildSourceWindows(report);
+  return report;
+}
+
+function extractSourceWindow(repoRoot, displayPath, line, radius) {
+  if (!line) return null;
+
+  const absolutePath = resolveRepoPath(repoRoot, displayPath);
+  if (!fs.existsSync(absolutePath)) return null;
+
+  const lines = fs.readFileSync(absolutePath, "utf8").split(/\r?\n/);
+  const startLine = Math.max(1, line - radius);
+  const endLine = Math.min(lines.length, line + radius);
+  const numberedLines = [];
+
+  for (let currentLine = startLine; currentLine <= endLine; currentLine += 1) {
+    numberedLines.push(`${String(currentLine).padStart(4, " ")} ${lines[currentLine - 1]}`);
+  }
+
+  return {
+    file: displayPath,
+    signalLine: line,
+    startLine,
+    endLine,
+    content: numberedLines.join("\n"),
+  };
+}
+
+function buildSourceWindows(report) {
+  const radius = report.source.windowRadius ?? DEFAULT_WINDOW_RADIUS;
+  const windows = [];
+  const seen = new Set();
+
+  for (const file of report.files) {
+    for (const signal of file.signals) {
+      const key = `${file.path}:${signal.line}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+
+      const sourceWindow = extractSourceWindow(report.repoRoot, file.path, signal.line, radius);
+      if (sourceWindow) {
+        windows.push({
+          ...sourceWindow,
+          ruleId: signal.ruleId,
+          category: signal.category,
+          functionName: signal.functionName,
+          detail: signal.detail,
+        });
+      }
+    }
+  }
+
+  return windows;
 }
 
 function renderMarkdown(report, maxSignals) {
@@ -907,6 +962,19 @@ function renderMarkdown(report, maxSignals) {
           return `- ${item.file}:${item.line} ${item.name}:${roleText} ${item.lines} lines, hooks=${item.hookCalls.length}, effects=${item.effects.length}, state=${item.state.length}, jsx=${item.jsxElements}, branches=${item.branchCount}`;
         })
       : ["- No function/component records found."];
+  const sourceWindowLines =
+    report.sourceWindows.length > 0
+      ? report.sourceWindows.slice(0, maxSignals).flatMap((sourceWindow) => [
+          `### ${sourceWindow.file}:${sourceWindow.startLine}-${sourceWindow.endLine}`,
+          "",
+          `- signal: [${sourceWindow.category}/${sourceWindow.ruleId}] ${sourceWindow.detail}`,
+          "",
+          "```tsx",
+          sourceWindow.content,
+          "```",
+          "",
+        ])
+      : ["- No source windows because no AST signals were found.", ""];
 
   return [
     "# React AST Preflight",
@@ -918,6 +986,7 @@ function renderMarkdown(report, maxSignals) {
     `- repo: \`${report.repoRoot}\``,
     `- target: ${report.source.targets.length > 0 ? report.source.targets.map((item) => `\`${item}\``).join(", ") : "none"}`,
     `- diff: ${report.source.diff ? `\`${report.source.diff}\`` : "none"}`,
+    `- source window radius: ${report.source.windowRadius}`,
     "",
     "## Summary",
     "",
@@ -940,6 +1009,9 @@ function renderMarkdown(report, maxSignals) {
     "",
     ...functionLines,
     "",
+    "## Source Windows",
+    "",
+    ...sourceWindowLines,
     "## AI Follow-Up Contract",
     "",
     "- Treat these as syntax facts and candidate review locations.",
@@ -964,6 +1036,7 @@ function main() {
   const diff = getStringFlag(flags, "diff");
   const maxFiles = getNumberFlag(flags, "max-files", DEFAULT_MAX_FILES);
   const maxSignals = getNumberFlag(flags, "max-signals", DEFAULT_MAX_SIGNALS);
+  const windowRadius = getNumberFlag(flags, "window-radius", DEFAULT_WINDOW_RADIUS);
   const outJson = resolveRepoPath(repoRoot, getStringFlag(flags, "out-json") ?? ".react-ai-reviewer/ast-analysis.json");
   const outMd = resolveRepoPath(repoRoot, getStringFlag(flags, "out-md") ?? ".react-ai-reviewer/ast-analysis.md");
 
@@ -985,6 +1058,7 @@ function main() {
       targets,
       diff,
       maxFiles,
+      windowRadius,
     },
     files: analyses,
   });

@@ -29,6 +29,16 @@ Do not load every reference by default. Choose the smallest useful context:
 
 Always inspect nearby `packages/design-system/src/components/**` code before editing. Prefer the repository's current kebab-case component folders, `Component.tsx`, `Component.types.ts`, `component-core.ts`, `component.css.ts`, and `index.ts` conventions unless the requested change explicitly asks for a new convention.
 
+## Preflight Script
+
+For component hardening, API cleanup, or review/refactor work, run deterministic GDS preflight before reading many files:
+
+```bash
+node skills/gds-generator/scripts/analyze-gds-component.mjs --repo . --target packages/design-system/src/components/button
+```
+
+Use `.gds-generator/component-analysis.md` to inspect folder shape, public exports, prop naming candidates, Vanilla Extract usage, slot/data-state facts, and architecture signals. Treat signals as candidates, not final review findings.
+
 ## Operating Principles
 
 - Use React + TypeScript.

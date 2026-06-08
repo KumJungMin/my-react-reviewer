@@ -26,6 +26,16 @@ Do not load every reference by default. Choose the smallest useful context:
 - For small single-function changes, start from this file and inspect nearby code. Load references only when separation or tests are non-trivial.
 - For page work, inspect existing page folders with matching patterns, especially `{Page}.tsx`, `use{Page}.ts(x)`, `.core.ts`, `.utils.ts`, and nearby tests.
 
+## Preflight Script
+
+For non-trivial page or feature work, run deterministic context preflight before opening many files:
+
+```bash
+node skills/business-feature-builder/scripts/analyze-feature-context.mjs --repo . --target apps/service/src/presentation/page/examplePage
+```
+
+Use `.business-feature-builder/feature-context.md` to choose the smallest files and references to open. Treat responsibility signals as candidates, not mandatory refactors.
+
 ## Required Flow
 
 1. Analyze requirements and identify inputs, outputs, state, side effects, and edge cases.

@@ -44,6 +44,16 @@ If those are missing, ask concise follow-up questions before editing.
 6. Cover meaningful states and edge cases that are required by the component, even if the mockup shows only one state.
 7. Run the relevant repository validation commands and report exact results.
 
+## Preflight Script
+
+Before implementing substantial Figma/screenshot-to-code work, collect reusable repository UI inventory:
+
+```bash
+node skills/create-component-from-figma/scripts/collect-ui-inventory.mjs --repo . --target src/features/example
+```
+
+Read `.create-component-from-figma/ui-inventory.md` before creating new primitives. It lists component exports, token/theme files, Vanilla Extract patterns, frequent UI imports, nearby files, and validation script candidates.
+
 ## Core Rules
 
 - Prefer repository primitives and composition over new primitives.
