@@ -2,6 +2,7 @@
 
 이 저장소에는 Codex에서 바로 사용할 수 있는 React/TypeScript 작업용 커스텀 스킬이 들어 있습니다.
 
+- `react-workflow-orchestrator`
 - `business-feature-builder`
 - `create-component-from-figma`
 - `gds-generator`
@@ -12,6 +13,9 @@
 
 ```text
 skills/
+  react-workflow-orchestrator/
+    SKILL.md
+    references/
   business-feature-builder/
     SKILL.md
     references/
@@ -37,6 +41,7 @@ skills/
 
 ```bash
 mkdir -p ~/.codex/skills
+ln -s /path/to/my-react-reviewer/skills/react-workflow-orchestrator ~/.codex/skills/react-workflow-orchestrator
 ln -s /path/to/my-react-reviewer/skills/business-feature-builder ~/.codex/skills/business-feature-builder
 ln -s /path/to/my-react-reviewer/skills/create-component-from-figma ~/.codex/skills/create-component-from-figma
 ln -s /path/to/my-react-reviewer/skills/gds-generator ~/.codex/skills/gds-generator
@@ -48,6 +53,7 @@ ln -s /path/to/my-react-reviewer/skills/react-upgrade-workflow ~/.codex/skills/r
 
 ```bash
 mkdir -p ~/.codex/skills
+ln -s /Users/gjm/my-react-reviewer/skills/react-workflow-orchestrator ~/.codex/skills/react-workflow-orchestrator
 ln -s /Users/gjm/my-react-reviewer/skills/business-feature-builder ~/.codex/skills/business-feature-builder
 ln -s /Users/gjm/my-react-reviewer/skills/create-component-from-figma ~/.codex/skills/create-component-from-figma
 ln -s /Users/gjm/my-react-reviewer/skills/gds-generator ~/.codex/skills/gds-generator
@@ -60,6 +66,7 @@ ln -s /Users/gjm/my-react-reviewer/skills/react-upgrade-workflow ~/.codex/skills
 복사 방식으로 넣고 싶다면 심볼릭 링크 대신 아래처럼 복사해도 됩니다.
 
 ```bash
+cp -R /path/to/my-react-reviewer/skills/react-workflow-orchestrator ~/.codex/skills/
 cp -R /path/to/my-react-reviewer/skills/business-feature-builder ~/.codex/skills/
 cp -R /path/to/my-react-reviewer/skills/create-component-from-figma ~/.codex/skills/
 cp -R /path/to/my-react-reviewer/skills/gds-generator ~/.codex/skills/
@@ -71,6 +78,7 @@ cp -R /path/to/my-react-reviewer/skills/react-upgrade-workflow ~/.codex/skills/
 
 가장 확실한 방법은 프롬프트에 스킬 이름을 직접 넣는 것입니다.
 
+- `$react-workflow-orchestrator`
 - `$business-feature-builder`
 - `$create-component-from-figma`
 - `$gds-generator`
@@ -83,13 +91,46 @@ cp -R /path/to/my-react-reviewer/skills/react-upgrade-workflow ~/.codex/skills/
 
 상황별 기본 선택은 아래와 같습니다.
 
-1. 비즈니스 요구사항, 사용할 컴포넌트, Figma 링크가 함께 있는 앱/페이지 기능 구현: `business-feature-builder`
-2. Figma, screenshot, mockup, 텍스트 UI 설명을 React 컴포넌트로 옮기는 초기 구현: `create-component-from-figma`
-3. `packages/design-system` 코드 수정, 디자인 시스템 컴포넌트 생성/리팩터링/강화: `gds-generator`
-4. 구현 후 최종 리뷰, React/hooks/test 품질 점검, 리뷰 기반 수정: `react-ai-reviewer`
-5. 기존 React 코드 고도화, hooks/effect/state cleanup, 책임 분리, 테스트 가능성 개선: `react-upgrade-workflow`
+1. 여러 스킬을 하나의 합의된 흐름으로 묶고, 구현 리스트/커밋 단위/최종 리뷰까지 제어해야 하는 작업: `react-workflow-orchestrator`
+2. 비즈니스 요구사항, 사용할 컴포넌트, Figma 링크가 함께 있는 앱/페이지 기능 구현: `business-feature-builder`
+3. Figma, screenshot, mockup, 텍스트 UI 설명을 React 컴포넌트로 옮기는 초기 구현: `create-component-from-figma`
+4. `packages/design-system` 코드 수정, 디자인 시스템 컴포넌트 생성/리팩터링/강화: `gds-generator`
+5. 구현 후 최종 리뷰, React/hooks/test 품질 점검, 리뷰 기반 수정: `react-ai-reviewer`
+6. 기존 React 코드 고도화, hooks/effect/state cleanup, 책임 분리, 테스트 가능성 개선: `react-upgrade-workflow`
 
 라우팅이 겹치면 더 구체적인 목적을 우선합니다. 예를 들어 비즈니스 요구사항과 Figma 링크가 함께 있으면 `create-component-from-figma`가 아니라 `business-feature-builder`를 기본 workflow로 쓰고, Figma 해석이 필요할 때만 보조적으로 `create-component-from-figma`를 참고합니다.
+
+## `react-workflow-orchestrator`
+
+여러 React 스킬을 하나의 작업 흐름으로 묶는 마스터 workflow입니다. 사용자가 AI의 작업 단위를 이해할 수 있도록 먼저 구현 리스트를 만들고, 각 단계가 어떤 스킬의 책임인지 명시합니다.
+
+### 언제 쓰면 좋은가
+
+- 하나의 요청이 Figma 해석, 비즈니스 구현, 디자인 시스템 수정, 리팩터링, 리뷰를 함께 포함할 때
+- 작업 전에 구현 단위와 커밋 단위를 사용자에게 보여줘야 할 때
+- 커밋을 약 300 changed lines 내외의 reviewable batch로 나누고 싶을 때
+- 커밋 메시지에 `Purpose`, `Direction`, `Validation`을 남기고 싶을 때
+- 하위 스킬끼리 판단 기준이 충돌할 때 하나의 합의된 방향으로 제어해야 할 때
+
+### 기본 사용 패턴
+
+```text
+$react-workflow-orchestrator로 이 기능을 구현해줘.
+
+조건:
+- 먼저 구현 리스트를 보여줘
+- 커밋은 300줄 내외로 나눠줘
+- 각 커밋 메시지에 목적과 방향을 적어줘
+- 마지막에 react-ai-reviewer로 리뷰해줘
+```
+
+### 제어 원칙
+
+- 구현 전에 `work unit`, 담당 스킬, 예상 파일, 검증 명령, 커밋 목적을 보여준다
+- 변경은 skeleton/contracts, core logic, hook orchestration, UI composition, tests, review fixes처럼 reviewable boundary로 나눈다
+- 커밋은 150-400 changed lines를 정상 범위로 보고, 초과 시 이유를 커밋 본문에 남긴다
+- 커밋 메시지는 `Purpose`, `Direction`, `Validation`을 포함한다
+- 하위 스킬은 도메인 판단을 담당하고, 마스터 스킬은 순서/합의/커밋/검증/최종 보고를 담당한다
 
 ## `business-feature-builder`
 

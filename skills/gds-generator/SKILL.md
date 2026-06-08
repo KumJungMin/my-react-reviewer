@@ -11,6 +11,7 @@ If the user writes `gda-generator`, treat it as `gds-generator` unless they clea
 
 ## Routing
 
+- If the user asks for a multi-skill workflow, user-visible implementation list, commit-sized batches, or purpose/direction commit messages, use `skills/react-workflow-orchestrator` as the primary workflow and this skill as a controlled substep.
 - Use this skill when code from `create-component-from-figma` needs design-system hardening, API cleanup, component architecture, docs/examples, tests, or package exports.
 - Use this skill when updating existing `packages/design-system` code.
 - If the request is only "turn this Figma link into code", use `skills/create-component-from-figma` first.

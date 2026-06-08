@@ -9,6 +9,7 @@ Implement durable product code from design assets. Prioritize repository fit, se
 
 ## Routing
 
+- If the user asks for a multi-skill workflow, user-visible implementation list, commit-sized batches, or purpose/direction commit messages, use `skills/react-workflow-orchestrator` as the primary workflow and this skill as a controlled substep.
 - Use this skill as the primary workflow for Figma/screenshot/mockup-to-code requests.
 - If the user provides business requirements plus components to use plus a Figma link, use `skills/business-feature-builder` as the primary workflow and use this skill only for design interpretation.
 - If the user asks to refine, harden, or update generated code into a design-system-quality component, use `skills/gds-generator`.

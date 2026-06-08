@@ -9,6 +9,8 @@ Use this skill when the user wants a structured React review workflow instead of
 
 Use this as the final review step after `create-component-from-figma`, `business-feature-builder`, or `gds-generator` has produced changes.
 
+For multi-skill workflow control, user-visible implementation lists, commit-sized batches, or purpose/direction commit messages, use `skills/react-workflow-orchestrator` as the primary workflow and this skill as the final review substep.
+
 For design-system component generation, public API design, HeroUI-style component/hook splitting, or substantial changes under `packages/design-system`, use `skills/gds-generator` instead. This reviewer may review existing design-system code, but it should not be the primary workflow for generating or refactoring GDS components.
 
 For business feature implementation, page logic, form flows, async orchestration, UI/business separation, or test generation from requirements, use `skills/business-feature-builder` instead. This reviewer may review those changes after implementation, but it should not be the primary workflow for building them.

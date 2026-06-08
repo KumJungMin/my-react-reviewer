@@ -19,6 +19,7 @@ Use this skill when the user asks for:
 
 Do not use this skill for:
 
+- multi-skill workflow control, user-visible implementation lists, commit-sized batches, or purpose/direction commit messages: use `react-workflow-orchestrator`
 - new business feature implementation: use `business-feature-builder`
 - review-only requests: use `react-ai-reviewer`
 - design-system component creation or hardening: use `gds-generator`
