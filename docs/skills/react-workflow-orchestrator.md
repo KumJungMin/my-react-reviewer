@@ -2,7 +2,7 @@
 
 ## 역할
 
-설계 확인, 구현 리스트, 300 changed lines 내외의 batch, `Purpose`/`Direction`/`Validation` 커밋 메시지, 단계별 검증은 모든 스킬이 공통으로 따르는 작업 대원칙입니다.
+설계 확인, 구현 리스트, 300 changed lines 내외의 batch, 타입이 있는 한국어 커밋 메시지, 단계별 검증은 모든 스킬이 공통으로 따르는 작업 대원칙입니다.
 
 `react-workflow-orchestrator`는 이 공통 원칙을 여러 React 스킬이 함께 쓰는 작업에서 하나의 합의된 workflow로 묶는 마스터 스킬입니다. 직접 모든 구현 판단을 대신하지 않고, 어떤 하위 스킬이 어떤 work unit을 맡을지 정하고, 순서, 커밋 경계, 검증, 최종 리뷰를 조율합니다.
 
@@ -43,7 +43,7 @@ $react-workflow-orchestrator로 [작업 이름]을 진행해줘.
 - 먼저 설계와 구현 리스트를 보여주고 확인받아줘
 - 각 work unit의 담당 스킬을 명시해줘
 - 커밋은 300 changed lines 내외로 나눠줘
-- 커밋 메시지에는 Purpose, Direction, Validation을 포함해줘
+- 커밋 메시지는 `<type>: <한글 요약>` 형식으로 쓰고 본문에는 `목적`, `방향`, `검증`을 한국어로 포함해줘
 - 마지막에 react-ai-reviewer로 리뷰해줘
 
 검증:
@@ -89,7 +89,7 @@ Implementation list
 | --- | --- |
 | 큰 요청이 한 번에 구현되어 리뷰하기 어렵다. | 작업이 work unit과 커밋 단위로 쪼개져 리뷰하기 쉽다. |
 | 어떤 스킬이 어떤 판단을 했는지 알기 어렵다. | 구현 리스트에서 담당 스킬과 파일 범위가 보인다. |
-| 커밋 메시지가 단순 변경 요약에 그친다. | `Purpose`, `Direction`, `Validation`으로 의도가 남는다. |
+| 커밋 메시지가 단순 변경 요약에 그친다. | 타입, `목적`, `방향`, `검증`으로 의도가 한국어로 남는다. |
 | 리뷰가 마지막에 빠지기 쉽다. | final review가 workflow에 포함된다. |
 
 ## 관련 파일

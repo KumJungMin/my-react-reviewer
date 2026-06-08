@@ -11,11 +11,11 @@ Do not use this skill for design-system component architecture under `packages/d
 
 ## Shared Work Principles
 
-Before non-trivial code-changing work, apply `../react-workflow-orchestrator/references/shared-work-principles.md` when available. This shared contract requires design confirmation before edits, reviewable batches around 300 changed lines, purpose/direction/validation commit messages, and per-unit validation.
+Before non-trivial code-changing work, apply `../react-workflow-orchestrator/references/shared-work-principles.md` when available. This shared contract requires design confirmation before edits, reviewable batches around 300 changed lines, commit messages that require a type and Korean summary/body, and per-unit validation.
 
 ## Routing
 
-- If the user asks for a multi-skill workflow, user-visible implementation list, commit-sized batches, or purpose/direction commit messages, use `skills/react-workflow-orchestrator` as the primary workflow and this skill as a controlled substep.
+- If the user asks for a multi-skill workflow, user-visible implementation list, commit-sized batches, or commit messages that require a type and Korean summary/body, use `skills/react-workflow-orchestrator` as the primary workflow and this skill as a controlled substep.
 - Use this skill as the primary workflow when the user provides business requirements, components to use, and a Figma link for an app/page feature.
 - Use `skills/create-component-from-figma` only as supporting design interpretation when a Figma link is part of the business feature.
 - Use `skills/gds-generator` instead when the target is `packages/design-system` or the task is hardening/updating design-system code.

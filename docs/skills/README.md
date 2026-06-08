@@ -8,7 +8,7 @@
 
 - 비사소한 코드 변경은 먼저 설계와 구현 리스트를 보여주고 확인을 받은 뒤 진행합니다.
 - 작업 단위와 커밋은 약 300 changed lines 내외의 reviewable batch로 나눕니다.
-- 커밋 메시지는 `Purpose`, `Direction`, `Validation`을 포함합니다.
+- 커밋 메시지는 타입을 필수로 포함하고, 요약과 본문은 한국어로 작성합니다.
 - 검증은 각 work unit마다 가능한 가장 좁은 명령으로 실행합니다.
 
 ## 마스터 스킬이란
@@ -19,7 +19,7 @@
 
 - 작업 전 설계와 구현 리스트 만들기
 - 커밋을 300 changed lines 내외의 reviewable batch로 나누기
-- 커밋 메시지에 `Purpose`, `Direction`, `Validation` 남기기
+- 커밋 메시지를 `<type>: <한글 요약>` 형식으로 쓰고 본문에 `목적`, `방향`, `검증` 남기기
 - 각 단계별 검증 실행하기
 
 마스터 스킬이 추가로 총괄하는 것:
@@ -63,7 +63,7 @@ $react-workflow-orchestrator로 이 작업을 진행해줘.
 조건:
 - 먼저 설계와 구현 리스트를 보여주고 확인받아줘
 - 커밋은 300 changed lines 내외로 나눠줘
-- 커밋 메시지에는 Purpose, Direction, Validation을 포함해줘
+- 커밋 메시지는 `<type>: <한글 요약>` 형식으로 쓰고 본문에는 `목적`, `방향`, `검증`을 한국어로 포함해줘
 - 마지막에 react-ai-reviewer로 리뷰해줘
 ```
 
@@ -95,7 +95,7 @@ $react-workflow-orchestrator로 이 작업을 진행해줘.
 작업 방식:
 - 먼저 설계와 구현 리스트를 보여주고 확인받아줘
 - 커밋은 300 changed lines 내외로 나눠줘
-- 커밋 메시지에는 Purpose, Direction, Validation을 포함해줘
+- 커밋 메시지는 `<type>: <한글 요약>` 형식으로 쓰고 본문에는 `목적`, `방향`, `검증`을 한국어로 포함해줘
 
 검증:
 - [typecheck / test / lint / build / 없음]

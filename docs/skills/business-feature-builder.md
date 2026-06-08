@@ -32,7 +32,7 @@ $business-feature-builder로 [페이지/기능 이름]을 구현해줘.
 - 먼저 설계와 구현 리스트를 보여주고 확인 전에는 수정하지 마
 - 페이지는 Page assembly + usePage hook + core/utils 기준으로 나눠줘
 - 커밋은 300 changed lines 내외의 work unit으로 나눠줘
-- 커밋 메시지에는 Purpose, Direction, Validation을 포함해줘
+- 커밋 메시지는 `<type>: <한글 요약>` 형식으로 쓰고 본문에는 `목적`, `방향`, `검증`을 한국어로 포함해줘
 
 검증:
 - [관련 page test]

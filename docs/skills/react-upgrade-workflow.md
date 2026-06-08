@@ -29,7 +29,7 @@ $react-upgrade-workflow로 [파일/폴더]를 고도화해줘.
 - useMemo/useCallback은 근거가 있을 때만 사용
 - 먼저 refactor plan과 구현 리스트를 보여주고 확인받아줘
 - 커밋은 300 changed lines 내외로 유지해줘
-- 커밋 메시지에는 Purpose, Direction, Validation을 포함해줘
+- 커밋 메시지는 `<type>: <한글 요약>` 형식으로 쓰고 본문에는 `목적`, `방향`, `검증`을 한국어로 포함해줘
 
 검증:
 - [typecheck / test / lint]

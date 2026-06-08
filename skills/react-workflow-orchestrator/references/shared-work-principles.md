@@ -56,19 +56,40 @@ Split large work in this order:
 
 ## Commit Message Contract
 
-When creating commits, use an imperative subject and include purpose, direction, and validation.
+When creating commits, the commit type is required and the summary/body must be written in Korean.
+
+Use this subject format:
 
 ```text
-<imperative subject>
+<type>: <한글 요약>
+```
 
-Purpose:
-- <why this commit exists>
+Allowed types:
 
-Direction:
-- <how this moves the implementation forward>
+- `feat`: 기능 추가 또는 사용자에게 보이는 기능 변경
+- `fix`: 버그 수정
+- `refactor`: 동작을 보존하는 구조 개선
+- `docs`: 문서 변경
+- `test`: 테스트 변경
+- `chore`: 저장소 관리 작업
+- `style`: 포맷팅 또는 스타일 전용 변경
+- `perf`: 성능 개선
+- `build`: 빌드, 의존성, 패키지 변경
+- `ci`: CI 설정 변경
 
-Validation:
-- <commands run, or not run with reason>
+Commit bodies must use Korean section labels and Korean explanations. Commands, file paths, package names, and code identifiers may remain as literals.
+
+```text
+<type>: <한글 요약>
+
+목적:
+- <이 커밋이 필요한 이유>
+
+방향:
+- <변경을 어떤 방향으로 진행했는지>
+
+검증:
+- <실행한 명령, 또는 실행하지 못한 이유>
 ```
 
 Before each commit:

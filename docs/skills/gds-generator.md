@@ -32,7 +32,7 @@ $gds-generator로 [컴포넌트 이름]을 개선해줘.
 작업 방식:
 - 먼저 public API, slot 구조, style/docs/test 변경 계획을 보여주고 확인받아줘
 - 커밋은 API, 구현, docs/tests처럼 reviewable batch로 나눠줘
-- 커밋 메시지에는 Purpose, Direction, Validation을 포함해줘
+- 커밋 메시지는 `<type>: <한글 요약>` 형식으로 쓰고 본문에는 `목적`, `방향`, `검증`을 한국어로 포함해줘
 
 검증:
 - design-system build

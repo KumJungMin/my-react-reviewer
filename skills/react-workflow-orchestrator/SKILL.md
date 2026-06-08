@@ -1,6 +1,6 @@
 ---
 name: react-workflow-orchestrator
-description: "Use when a React/TypeScript task spans multiple existing skills or should be run as one controlled workflow with a user-visible implementation list, skill routing, commit-sized batches around 300 changed lines, purpose/direction commit messages, validation gates, and final review coordination. Coordinates business-feature-builder, create-component-from-figma, gds-generator, react-upgrade-workflow, and react-ai-reviewer without replacing their domain rules."
+description: "Use when a React/TypeScript task spans multiple existing skills or should be run as one controlled workflow with a user-visible implementation list, skill routing, commit-sized batches around 300 changed lines, commit messages that require a type and Korean summary/body, validation gates, and final review coordination. Coordinates business-feature-builder, create-component-from-figma, gds-generator, react-upgrade-workflow, and react-ai-reviewer without replacing their domain rules."
 ---
 
 # React Workflow Orchestrator
@@ -29,7 +29,7 @@ Do not use this skill for a narrow one-skill request that does not need batching
 
 ## Shared Principles
 
-Load `references/shared-work-principles.md` before non-trivial code-changing work. It is the shared contract for design confirmation, reviewable 300-line batches, purpose/direction commit messages, and per-unit validation across all React skills.
+Load `references/shared-work-principles.md` before non-trivial code-changing work. It is the shared contract for design confirmation, reviewable 300-line batches, commit messages that require a type and Korean summary/body, and per-unit validation across all React skills.
 
 ## Implementation List
 

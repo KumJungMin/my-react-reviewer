@@ -19,48 +19,48 @@ Avoid mixing unrelated concerns such as API naming, UI layout, validation policy
 
 ## Commit Message Examples
 
-Use the canonical commit message contract from `shared-work-principles.md`. These examples show good purpose and direction wording for common React work units.
+커밋 메시지의 기준은 `shared-work-principles.md`를 따릅니다. 아래는 자주 쓰는 React work unit에 맞춘 타입 필수 한국어 커밋 메시지 예시입니다.
 
 ```text
-Add service intro page sections
+feat: 서비스 소개 페이지 섹션을 분리한다
 
-Purpose:
-- Make the page structure reviewable by separating semantic sections.
+목적:
+- 의미 단위 섹션을 분리해 페이지 구조를 리뷰하기 쉽게 만든다.
 
-Direction:
-- Keep ServiceIntroPage as the assembly layer and move section JSX behind prop-based components.
+방향:
+- ServiceIntroPage는 조립 계층으로 유지하고 섹션 JSX는 props 기반 컴포넌트로 옮긴다.
 
-Validation:
+검증:
 - pnpm test --filter service
 ```
 
-For refactors:
+리팩터링 예시:
 
 ```text
-Extract verification code validation core
+refactor: 인증 코드 검증 로직을 core로 분리한다
 
-Purpose:
-- Move business validation out of the React hook so it can be tested without rendering.
+목적:
+- 비즈니스 검증을 React hook 밖으로 옮겨 렌더링 없이 테스트할 수 있게 한다.
 
-Direction:
-- Keep the hook responsible for orchestration and delegate policy checks to pure functions.
+방향:
+- hook은 orchestration만 맡기고 정책 판단은 순수 함수로 위임한다.
 
-Validation:
+검증:
 - pnpm test VerificationCodeInputPage
 ```
 
-For review fixes:
+리뷰 수정 예시:
 
 ```text
-Address page layering review findings
+fix: 페이지 레이어링 리뷰 지적을 반영한다
 
-Purpose:
-- Resolve reviewer findings that affect maintainability without changing behavior.
+목적:
+- 동작을 바꾸지 않고 유지보수성에 영향을 주는 리뷰 지적을 해결한다.
 
-Direction:
-- Remove local render helper clustering and keep event wiring at the page boundary.
+방향:
+- 로컬 render helper 군집을 줄이고 이벤트 연결은 페이지 경계에 유지한다.
 
-Validation:
+검증:
 - pnpm test ServiceIntroPage
 ```
 

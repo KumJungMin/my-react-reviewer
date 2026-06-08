@@ -19,11 +19,11 @@ Use this skill when the user asks for:
 
 ## Shared Work Principles
 
-Before non-trivial code-changing work, apply `../react-workflow-orchestrator/references/shared-work-principles.md` when available. This shared contract requires design confirmation before edits, reviewable batches around 300 changed lines, purpose/direction/validation commit messages, and per-unit validation.
+Before non-trivial code-changing work, apply `../react-workflow-orchestrator/references/shared-work-principles.md` when available. This shared contract requires design confirmation before edits, reviewable batches around 300 changed lines, commit messages that require a type and Korean summary/body, and per-unit validation.
 
 Do not use this skill for:
 
-- multi-skill workflow control, user-visible implementation lists, commit-sized batches, or purpose/direction commit messages: use `react-workflow-orchestrator`
+- multi-skill workflow control, user-visible implementation lists, commit-sized batches, or commit messages that require a type and Korean summary/body: use `react-workflow-orchestrator`
 - new business feature implementation: use `business-feature-builder`
 - review-only requests: use `react-ai-reviewer`
 - design-system component creation or hardening: use `gds-generator`
