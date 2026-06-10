@@ -20,6 +20,7 @@ Mirror the user's language in the output unless the user requests otherwise.
 
 Load only what is needed:
 
+- For product, domain, project, team, or feature-specific context, read `references/context.md` when it contains relevant notes. Treat unfilled placeholder sections as absent.
 - For normal mapping output, read `references/output-template.md`.
 - For complex or mixed requirements, read `references/behavior-grouping-rules.md`.
 - For gap and risk discovery, read `references/requirement-risk-checklist.md`.
