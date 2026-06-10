@@ -1,6 +1,6 @@
 ---
 name: business-feature-builder
-description: "Use when implementing React/TypeScript business features from requirements, including page logic, form flows, prescribed components, Figma-linked feature specs, stateful UI behavior, API/usecase orchestration, validation, navigation, and tests. This is the primary workflow when the user provides business requirements plus components to use plus a Figma link. Enforces skeleton-first implementation, UI/business separation, pure core/utils extraction, focused tests, and UI decomposition by role, rerender boundary, cohesion, and maintainability."
+description: "Use when implementing React/TypeScript business features from requirements, including requirement-list breakdown into small implementation units, page logic, form flows, prescribed components, Figma-linked feature specs, stateful UI behavior, API/usecase orchestration, validation, navigation, and tests. This is the primary workflow when the user provides business requirements plus components to use plus a Figma link. Enforces skeleton-first implementation, UI/business separation, pure core/utils extraction, focused tests, and UI decomposition by role, rerender boundary, cohesion, and maintainability."
 ---
 
 # Business Feature Builder
@@ -16,6 +16,7 @@ Before non-trivial code-changing work, apply `../react-workflow-orchestrator/ref
 ## Routing
 
 - If the user asks for a multi-skill workflow, user-visible implementation list, commit-sized batches, or commit messages that require a type and Korean summary/body, use `skills/react-workflow-orchestrator` as the primary workflow and this skill as a controlled substep.
+- If the user asks to group, refine, or risk-check requirements before code changes, use `skills/requirement-behavior-mapper` first. Use this skill after the behavior map is ready and implementation should begin.
 - Use this skill as the primary workflow when the user provides business requirements, components to use, and a Figma link for an app/page feature.
 - Use `skills/create-component-from-figma` only as supporting design interpretation when a Figma link is part of the business feature.
 - Use `skills/gds-generator` instead when the target is `packages/design-system` or the task is hardening/updating design-system code.
@@ -30,6 +31,29 @@ Do not load every reference by default. Choose the smallest useful context:
 - For test generation, test scope, edge cases, mocks, and verification strategy, read `references/testing-rules.md`.
 - For small single-function changes, start from this file and inspect nearby code. Load references only when separation or tests are non-trivial.
 - For page work, inspect existing page folders with matching patterns, especially `{Page}.tsx`, `use{Page}.ts(x)`, `.core.ts`, `.utils.ts`, and nearby tests.
+
+## Requirement Breakdown Mode
+
+Use this mode when the user provides a list of requirements and asks to implement them incrementally. This mode turns requirements into small code-changing units before skeleton-first implementation.
+
+If the user only wants planning, grouping, missing-case discovery, or questions before implementation, route to `skills/requirement-behavior-mapper` instead.
+
+Output before editing:
+
+1. Requirement summary: concise interpretation of the requested behavior and explicit assumptions.
+2. User behavior units: actor-trigger-outcome groupings that explain how a user experiences the feature.
+3. Implementation units: small code-changing slices, each with purpose, dependencies, and expected behavior.
+4. File responsibility split: likely files and the responsibility each file should own.
+5. Validation per unit: targeted tests, typecheck, or manual verification for each slice.
+6. Recommended commit boundary: one behaviorally coherent boundary per unit unless the change is too small to split.
+
+Implementation unit rules:
+
+- Keep a unit small enough to review independently.
+- Prefer vertical slices that include pure logic, hook orchestration, UI wiring, and tests for one behavior.
+- Separate setup or skeleton work only when it makes later behavior units clearer.
+- Preserve requirement IDs or labels from the user when available.
+- Mark blocked or ambiguous units before editing if a risky assumption would change public behavior.
 
 ## Preflight Script
 

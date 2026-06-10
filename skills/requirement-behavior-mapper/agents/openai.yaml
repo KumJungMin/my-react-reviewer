@@ -1,0 +1,4 @@
+interface:
+  display_name: "Requirement Behavior Mapper"
+  short_description: "Map requirements into user behavior units"
+  default_prompt: "Use $requirement-behavior-mapper to group this requirements list by user behavior, identify missing cases, and suggest implementation or commit slices."

@@ -31,6 +31,7 @@
 
 마스터 스킬이 직접 대신하지 않는 것:
 
+- 요구사항 유저 동작 그룹핑과 사전 리스크 정리는 `requirement-behavior-mapper`가 맡습니다.
 - Figma 해석 세부 판단은 `create-component-from-figma`가 맡습니다.
 - 비즈니스 기능 구현 세부 판단은 `business-feature-builder`가 맡습니다.
 - design-system API와 slot 구조 판단은 `gds-generator`가 맡습니다.
@@ -44,6 +45,7 @@
 | 상황 | 먼저 쓸 스킬 | 이유 |
 | --- | --- | --- |
 | 여러 스킬, 여러 커밋, 최종 리뷰가 필요한 큰 작업 | `react-workflow-orchestrator` | 전체 순서와 합의를 제어합니다. |
+| 요구사항 리스트를 구현 전 사용자 행동 단위로 정리 | `requirement-behavior-mapper` | 누락된 상태, 예외, 권한, validation, loading/error case를 드러냅니다. |
 | 요구사항 기반 페이지/기능 구현 | `business-feature-builder` | 페이지 상태, validation, navigation, 테스트까지 묶어 구현합니다. |
 | Figma/screenshot/mockup을 React 코드로 변환 | `create-component-from-figma` | 디자인을 repository 패턴에 맞는 초기 컴포넌트로 옮깁니다. |
 | 디자인 시스템 컴포넌트 생성/강화 | `gds-generator` | public API, slots, accessibility, docs, exports까지 다룹니다. |
@@ -72,6 +74,7 @@ $react-workflow-orchestrator로 이 작업을 진행해줘.
 ## 스킬별 상세 문서
 
 - [React Workflow Orchestrator](react-workflow-orchestrator.md)
+- [Requirement Behavior Mapper](requirement-behavior-mapper.md)
 - [Business Feature Builder](business-feature-builder.md)
 - [Create Component From Figma](create-component-from-figma.md)
 - [GDS Generator](gds-generator.md)

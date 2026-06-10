@@ -3,6 +3,7 @@
 이 저장소에는 Codex에서 바로 사용할 수 있는 React/TypeScript 작업용 커스텀 스킬이 들어 있습니다.
 
 - `react-workflow-orchestrator`
+- `requirement-behavior-mapper`
 - `business-feature-builder`
 - `create-component-from-figma`
 - `gds-generator`
@@ -14,6 +15,9 @@
 ```text
 skills/
   react-workflow-orchestrator/
+    SKILL.md
+    references/
+  requirement-behavior-mapper/
     SKILL.md
     references/
   business-feature-builder/
@@ -46,6 +50,7 @@ skills/
 ```bash
 mkdir -p ~/.codex/skills
 ln -s /path/to/my-react-reviewer/skills/react-workflow-orchestrator ~/.codex/skills/react-workflow-orchestrator
+ln -s /path/to/my-react-reviewer/skills/requirement-behavior-mapper ~/.codex/skills/requirement-behavior-mapper
 ln -s /path/to/my-react-reviewer/skills/business-feature-builder ~/.codex/skills/business-feature-builder
 ln -s /path/to/my-react-reviewer/skills/create-component-from-figma ~/.codex/skills/create-component-from-figma
 ln -s /path/to/my-react-reviewer/skills/gds-generator ~/.codex/skills/gds-generator
@@ -58,6 +63,7 @@ ln -s /path/to/my-react-reviewer/skills/react-upgrade-workflow ~/.codex/skills/r
 ```bash
 mkdir -p ~/.codex/skills
 ln -s /Users/gjm/my-react-reviewer/skills/react-workflow-orchestrator ~/.codex/skills/react-workflow-orchestrator
+ln -s /Users/gjm/my-react-reviewer/skills/requirement-behavior-mapper ~/.codex/skills/requirement-behavior-mapper
 ln -s /Users/gjm/my-react-reviewer/skills/business-feature-builder ~/.codex/skills/business-feature-builder
 ln -s /Users/gjm/my-react-reviewer/skills/create-component-from-figma ~/.codex/skills/create-component-from-figma
 ln -s /Users/gjm/my-react-reviewer/skills/gds-generator ~/.codex/skills/gds-generator
@@ -71,6 +77,7 @@ ln -s /Users/gjm/my-react-reviewer/skills/react-upgrade-workflow ~/.codex/skills
 
 ```bash
 cp -R /path/to/my-react-reviewer/skills/react-workflow-orchestrator ~/.codex/skills/
+cp -R /path/to/my-react-reviewer/skills/requirement-behavior-mapper ~/.codex/skills/
 cp -R /path/to/my-react-reviewer/skills/business-feature-builder ~/.codex/skills/
 cp -R /path/to/my-react-reviewer/skills/create-component-from-figma ~/.codex/skills/
 cp -R /path/to/my-react-reviewer/skills/gds-generator ~/.codex/skills/
@@ -83,6 +90,7 @@ cp -R /path/to/my-react-reviewer/skills/react-upgrade-workflow ~/.codex/skills/
 가장 확실한 방법은 프롬프트에 스킬 이름을 직접 넣는 것입니다.
 
 - `$react-workflow-orchestrator`
+- `$requirement-behavior-mapper`
 - `$business-feature-builder`
 - `$create-component-from-figma`
 - `$gds-generator`
@@ -96,11 +104,12 @@ cp -R /path/to/my-react-reviewer/skills/react-upgrade-workflow ~/.codex/skills/
 상황별 기본 선택은 아래와 같습니다.
 
 1. 여러 스킬을 하나의 합의된 흐름으로 묶고, 구현 리스트/커밋 단위/최종 리뷰까지 제어해야 하는 작업: `react-workflow-orchestrator`
-2. 비즈니스 요구사항, 사용할 컴포넌트, Figma 링크가 함께 있는 앱/페이지 기능 구현: `business-feature-builder`
-3. Figma, screenshot, mockup, 텍스트 UI 설명을 React 컴포넌트로 옮기는 초기 구현: `create-component-from-figma`
-4. `packages/design-system` 코드 수정, 디자인 시스템 컴포넌트 생성/리팩터링/강화: `gds-generator`
-5. 구현 후 최종 리뷰, React/hooks/test 품질 점검, 리뷰 기반 수정: `react-ai-reviewer`
-6. 기존 React 코드 고도화, hooks/effect/state cleanup, 책임 분리, 테스트 가능성 개선: `react-upgrade-workflow`
+2. 요구사항 리스트를 유저 동작 단위로 그룹핑하고 누락/위험/질문을 정리하는 사전 분석: `requirement-behavior-mapper`
+3. 비즈니스 요구사항, 사용할 컴포넌트, Figma 링크가 함께 있는 앱/페이지 기능 구현: `business-feature-builder`
+4. Figma, screenshot, mockup, 텍스트 UI 설명을 React 컴포넌트로 옮기는 초기 구현: `create-component-from-figma`
+5. `packages/design-system` 코드 수정, 디자인 시스템 컴포넌트 생성/리팩터링/강화: `gds-generator`
+6. 구현 후 최종 리뷰, React/hooks/test 품질 점검, 리뷰 기반 수정: `react-ai-reviewer`
+7. 기존 React 코드 고도화, hooks/effect/state cleanup, 책임 분리, 테스트 가능성 개선: `react-upgrade-workflow`
 
 라우팅이 겹치면 여러 단계, 여러 스킬, 커밋 분리, 최종 리뷰가 필요한지는 먼저 봅니다. 그런 작업은 `react-workflow-orchestrator`를 기본 진입점으로 쓰고, 단일 목적의 작은 작업만 더 구체적인 하위 스킬로 바로 라우팅합니다. 예를 들어 비즈니스 요구사항과 Figma 링크가 함께 있으면 단일 구현은 `business-feature-builder`, 구현 리스트와 커밋 단위까지 제어해야 하면 `react-workflow-orchestrator`를 기본 workflow로 씁니다.
 
@@ -145,6 +154,7 @@ React/TypeScript 비즈니스 기능 구현을 위한 기본 workflow입니다. 
 ### 언제 쓰면 좋은가
 
 - 요구사항 기반으로 앱/페이지 기능을 구현해야 할 때
+- 요구사항 리스트를 작은 구현 단위로 쪼갠 뒤 바로 skeleton-first 구현까지 진행해야 할 때
 - 사용할 컴포넌트와 Figma 링크가 함께 주어진 기능 작업일 때
 - UI와 비즈니스 로직을 분리하면서 hook, core/utils, 테스트까지 구성해야 할 때
 - skeleton-first 방식으로 함수, handler, hook, component signature를 먼저 잡고 구현해야 할 때
@@ -188,6 +198,30 @@ $business-feature-builder로 회원 탈퇴 페이지 기능을 구현해줘.
 
 ```bash
 node skills/business-feature-builder/scripts/analyze-feature-context.mjs --repo . --target apps/service/src/presentation/page/examplePage
+```
+
+## `requirement-behavior-mapper`
+
+요구사항 리스트를 코드 수정 전에 유저 동작 단위로 정리하는 planning 스킬입니다. 구현 스킬이 아니라 요구사항의 누락, 예외, 상태, 권한, validation, loading/error case를 먼저 드러내는 데 초점을 둡니다.
+
+### 언제 쓰면 좋은가
+
+- 요구사항이 길거나 섞여 있어 사용자 행동 단위로 먼저 묶어야 할 때
+- 구현 전에 누락된 상태, 예외, 권한, validation, loading/error case를 확인하고 싶을 때
+- 기능 단위나 커밋 단위로 나누는 기준을 먼저 잡고 싶을 때
+- 바로 구현하지 않고 제품/기획 질문을 정리하고 싶을 때
+
+### 기본 사용 패턴
+
+```text
+$requirement-behavior-mapper로 아래 요구사항을 유저 동작 단위로 그룹핑해줘.
+
+출력:
+- 요구사항 요약
+- 유저 동작 단위
+- 누락/위험 고려사항
+- 구현 전 질문
+- 구현 slice와 추천 커밋 경계
 ```
 
 ## `create-component-from-figma`
@@ -384,10 +418,11 @@ node skills/react-ai-reviewer/scripts/analyze-react-ast.mjs --repo . --target sr
 
 새 기능을 만드는 경우:
 
-1. `react-workflow-orchestrator`로 구현 리스트, 담당 스킬, 커밋 단위, 검증 계획을 먼저 합의
-2. `business-feature-builder`가 요구사항, skeleton, 책임 분리, 구현, 테스트를 담당
-3. Figma 해석이 필요한 부분은 `create-component-from-figma`를 controlled substep으로 활용
-4. 구현 후 `react-ai-reviewer`로 final review
+1. 요구사항이 raw list라면 `requirement-behavior-mapper`로 사용자 행동/상태/예외 기준을 먼저 정리
+2. `react-workflow-orchestrator`로 구현 리스트, 담당 스킬, 커밋 단위, 검증 계획을 합의
+3. `business-feature-builder`가 요구사항 breakdown, skeleton, 책임 분리, 구현, 테스트를 담당
+4. Figma 해석이 필요한 부분은 `create-component-from-figma`를 controlled substep으로 활용
+5. 구현 후 `react-ai-reviewer`로 final review
 
 기존 코드 고도화 작업인 경우:
 
@@ -406,6 +441,7 @@ node skills/react-ai-reviewer/scripts/analyze-react-ast.mjs --repo . --target sr
 
 - [React Skills Beginner Guide](docs/skills/README.md)
 - [react-workflow-orchestrator SKILL](skills/react-workflow-orchestrator/SKILL.md)
+- [requirement-behavior-mapper SKILL](skills/requirement-behavior-mapper/SKILL.md)
 - [business-feature-builder SKILL](skills/business-feature-builder/SKILL.md)
 - [create-component-from-figma SKILL](skills/create-component-from-figma/SKILL.md)
 - [gds-generator SKILL](skills/gds-generator/SKILL.md)

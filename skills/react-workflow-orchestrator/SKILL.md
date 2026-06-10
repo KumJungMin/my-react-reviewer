@@ -1,6 +1,6 @@
 ---
 name: react-workflow-orchestrator
-description: "Use when a React/TypeScript task spans multiple existing skills or should be run as one controlled workflow with a user-visible implementation list, skill routing, commit-sized batches around 300 changed lines, commit messages that require a type and Korean summary/body, validation gates, and final review coordination. Coordinates business-feature-builder, create-component-from-figma, gds-generator, react-upgrade-workflow, and react-ai-reviewer without replacing their domain rules."
+description: "Use when a React/TypeScript task spans multiple existing skills or should be run as one controlled workflow with a user-visible implementation list, skill routing, requirement behavior mapping, commit-sized batches around 300 changed lines, commit messages that require a type and Korean summary/body, validation gates, and final review coordination. Coordinates requirement-behavior-mapper, business-feature-builder, create-component-from-figma, gds-generator, react-upgrade-workflow, and react-ai-reviewer without replacing their domain rules."
 ---
 
 # React Workflow Orchestrator
@@ -11,6 +11,7 @@ Do not use this skill for a narrow one-skill request that does not need batching
 
 ## Controlled Skills
 
+- `requirement-behavior-mapper`: pre-implementation requirement grouping, missing-case discovery, implementation/commit slicing guidance.
 - `business-feature-builder`: business feature implementation, page logic, forms, validation, navigation, tests.
 - `create-component-from-figma`: Figma, screenshot, mockup, or written UI to initial React component code.
 - `gds-generator`: design-system component architecture, public API, Vanilla Extract styling, docs, tests, exports.
@@ -20,12 +21,13 @@ Do not use this skill for a narrow one-skill request that does not need batching
 ## Required Flow
 
 1. Classify the request and select the minimal set of controlled skills.
-2. Run deterministic preflight scripts before broad source reading when a relevant script exists.
-3. Produce a design and implementation list before major edits, then wait for explicit user confirmation for non-trivial work.
-4. Execute one work unit at a time under the batch and commit rules in `references/shared-work-principles.md`.
-5. Validate each work unit with the narrowest useful checks.
-6. Use `react-ai-reviewer` for final review when the task changes React behavior, hooks, page structure, design-system API, or tests.
-7. Finish with the implementation list status, commits created, validation results, and any remaining risks.
+2. If the task starts from a requirement list, use `requirement-behavior-mapper` to group user behaviors, expose gaps, and propose implementation or commit slices before implementation planning.
+3. Run deterministic preflight scripts before broad source reading when a relevant script exists.
+4. Produce a design and implementation list before major edits, then wait for explicit user confirmation for non-trivial work.
+5. Execute one work unit at a time under the batch and commit rules in `references/shared-work-principles.md`.
+6. Validate each work unit with the narrowest useful checks.
+7. Use `react-ai-reviewer` for final review when the task changes React behavior, hooks, page structure, design-system API, or tests.
+8. Finish with the implementation list status, commits created, validation results, and any remaining risks.
 
 ## Shared Principles
 

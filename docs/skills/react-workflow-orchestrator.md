@@ -21,6 +21,7 @@
 ## 언제 쓰나
 
 - 하나의 요청에 Figma 해석, 기능 구현, 리팩터링, 테스트, 리뷰가 섞여 있을 때
+- 요구사항 리스트 분석, 구현, 검증, 최종 리뷰를 한 흐름으로 이어야 할 때
 - 사용자가 AI의 작업 단위와 커밋 단위를 먼저 이해해야 할 때
 - 큰 변경을 300 changed lines 내외의 reviewable batch로 나누고 싶을 때
 - 하위 스킬끼리 판단 기준이 충돌할 수 있을 때
@@ -53,30 +54,37 @@ $react-workflow-orchestrator로 [작업 이름]을 진행해줘.
 ## 실제 동작
 
 1. 요청을 읽고 필요한 하위 스킬을 고릅니다.
-2. 가능한 경우 AST/preflight 스크립트로 먼저 후보 정보를 수집합니다.
-3. 구현 리스트를 만듭니다.
-4. 사용자가 확인하면 work unit별로 구현합니다.
-5. 각 work unit마다 좁은 검증을 실행합니다.
-6. 커밋이 필요한 경우 목적 단위로 나누고 상세 커밋 메시지를 작성합니다.
-7. 변경이 React 동작, hooks, page 구조, design-system API, 테스트에 영향을 주면 `react-ai-reviewer`로 final review를 붙입니다.
+2. 요구사항 리스트에서 시작하면 `requirement-behavior-mapper`로 유저 동작, 누락 케이스, 구현/커밋 slice를 먼저 정리합니다.
+3. 가능한 경우 AST/preflight 스크립트로 먼저 후보 정보를 수집합니다.
+4. 구현 리스트를 만듭니다.
+5. 사용자가 확인하면 work unit별로 구현합니다.
+6. 각 work unit마다 좁은 검증을 실행합니다.
+7. 커밋이 필요한 경우 목적 단위로 나누고 상세 커밋 메시지를 작성합니다.
+8. 변경이 React 동작, hooks, page 구조, design-system API, 테스트에 영향을 주면 `react-ai-reviewer`로 final review를 붙입니다.
 
 ## 구현 리스트 예시
 
 ```text
 Implementation list
-1. Feature skeleton: 요구사항을 page, hook, core 함수 시그니처로 나눕니다.
+1. Requirement mapping: 요구사항을 사용자 행동, 누락 케이스, 구현 slice로 정리합니다.
+   Skill: requirement-behavior-mapper
+   Files: none
+   Commit: none
+   Validate: mapping coverage check
+
+2. Feature skeleton: 요구사항을 page, hook, core 함수 시그니처로 나눕니다.
    Skill: business-feature-builder
    Files: apps/service/src/presentation/page/examplePage/**
    Commit: Add example page skeleton
    Validate: typecheck
 
-2. UI sections: 큰 JSX 영역을 semantic section component로 분리합니다.
+3. UI sections: 큰 JSX 영역을 semantic section component로 분리합니다.
    Skill: business-feature-builder
    Files: apps/service/src/presentation/page/examplePage/components/**
    Commit: Extract example page sections
    Validate: page test
 
-3. Final review: hooks, layering, testability를 리뷰합니다.
+4. Final review: hooks, layering, testability를 리뷰합니다.
    Skill: react-ai-reviewer
    Files: current diff
    Commit: review fixes only if needed

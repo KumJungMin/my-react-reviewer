@@ -14,6 +14,8 @@ Before editing, identify:
 - loading, disabled, empty, permission, and edge states
 - files likely affected by existing repository conventions
 
+For requirement-list implementation, first produce the `Requirement Breakdown Mode` output from `SKILL.md`: requirement summary, user behavior units, implementation units, file responsibility split, validation per unit, and recommended commit boundary. Use that breakdown as the skeleton-first implementation order.
+
 If requirements are ambiguous and a risky assumption would shape the implementation, ask a concise question. Otherwise make a conservative assumption and state it in the final response.
 
 ## Phase 2: Skeleton First

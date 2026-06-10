@@ -4,9 +4,12 @@
 
 `business-feature-builder`는 요구사항 기반 React/TypeScript 비즈니스 기능을 구현하는 스킬입니다. 페이지 로직, form flow, validation, navigation, async orchestration, 테스트를 함께 다룹니다.
 
+요구사항 리스트를 작은 구현 단위로 쪼갠 뒤 실제 코드 변경까지 이어갈 때도 이 스킬을 씁니다. 구현 전 기획/누락 분석만 필요하면 `requirement-behavior-mapper`를 먼저 씁니다.
+
 ## 언제 쓰나
 
 - 앱/페이지 기능을 새로 구현해야 할 때
+- 요구사항 리스트를 작은 구현 단위로 나눠 skeleton-first로 구현해야 할 때
 - 요구사항, 사용할 컴포넌트, Figma 링크가 함께 있을 때
 - UI와 비즈니스 로직을 분리해야 할 때
 - `{PageName}Page.tsx`, `use{PageName}Page`, `.core.ts`, `.utils.ts`, tests 구조가 필요한 때
@@ -42,12 +45,13 @@ $business-feature-builder로 [페이지/기능 이름]을 구현해줘.
 ## 실제 동작
 
 1. 요구사항에서 입력, 출력, 상태, side effect, edge case를 뽑습니다.
-2. 비사소한 작업이면 설계와 구현 리스트를 먼저 제시합니다.
-3. skeleton-first로 component, hook, handler, core function signature를 잡습니다.
-4. React runtime concern은 hook으로, 순수 정책/validation/mapping은 `.core.ts`나 `.utils.ts`로 분리합니다.
-5. 페이지 JSX는 semantic section으로 나눌 수 있는지 확인합니다.
-6. normal, validation, error, loading, disabled, edge case 테스트를 추가하거나 갱신합니다.
-7. 관련 검증을 실행하고 결과를 보고합니다.
+2. 요구사항 리스트 구현이면 요약, 유저 동작 단위, 구현 단위, 파일 책임, 단위별 검증, 추천 커밋 경계를 먼저 만듭니다.
+3. 비사소한 작업이면 설계와 구현 리스트를 먼저 제시합니다.
+4. skeleton-first로 component, hook, handler, core function signature를 잡습니다.
+5. React runtime concern은 hook으로, 순수 정책/validation/mapping은 `.core.ts`나 `.utils.ts`로 분리합니다.
+6. 페이지 JSX는 semantic section으로 나눌 수 있는지 확인합니다.
+7. normal, validation, error, loading, disabled, edge case 테스트를 추가하거나 갱신합니다.
+8. 관련 검증을 실행하고 결과를 보고합니다.
 
 ## 기대 효과
 
