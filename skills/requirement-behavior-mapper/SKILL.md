@@ -22,6 +22,7 @@ Load only what is needed:
 
 - For product, domain, project, team, or feature-specific context, read `references/context.md` when it contains relevant notes. Treat unfilled placeholder sections as absent.
 - For normal mapping output, read `references/output-template.md`.
+- For a copy-ready prompt to pass the handoff to the next implementation skill, read `references/next-skill-request-template.md` only when the user explicitly asks for a next-skill request template or asks to continue into implementation.
 - For complex or mixed requirements, read `references/behavior-grouping-rules.md`.
 - For gap and risk discovery, read `references/requirement-risk-checklist.md`.
 
@@ -37,10 +38,20 @@ Load only what is needed:
 
 ## Output Rules
 
-- Lead with the behavior map, not generic commentary.
+- Lead with a user-friendly scenario summary and behavior map, not generic commentary.
+- Write `Requirement Summary`, `User Behavior Units`, and `Requirement Coverage` for a product/user reader. Avoid implementation jargon there unless the original requirement uses it.
+- Write `Implementation Slices` in Korean with user-friendly labels such as `구현 단위`, `관련 동작`, `구현할 내용`, and `나누는 이유`.
+- Keep implementation-oriented details such as dependencies, validation, and recommended commit boundaries inside `Codex Skill Handoff`.
 - Keep each behavior unit small enough to become an implementation unit.
 - Use requirement IDs when available so coverage is auditable.
 - Separate confirmed requirements from inferred assumptions.
+- Include a `Codex Skill Handoff` block in a stable fenced `yaml` shape so `business-feature-builder` or `react-workflow-orchestrator` can continue without reinterpreting tables.
+- Include a `Next Skill Request Template` only when the user explicitly requests it or asks to continue into implementation. Use `references/next-skill-request-template.md` then.
+- In the handoff block, keep IDs stable across requirements, behavior units, implementation slices, questions, and recommended commit boundaries.
+- Mark whether the mapped requirements are `ready_for_implementation`, `needs_answers`, or `reduce_scope`.
+- Before the handoff YAML, state: "이 정보를 구현 시 `<next_skill>`에게 전달하면 요구사항 구현이 용이합니다."
+- Combine implementation questions and the copy-ready answer template into one section named `구현 전 확인 및 답변`.
+- If there are no required user decisions, write `구현 전 필수로 답변할 질문 없음` in that section and include `구현 요청 템플릿을 만들어줘.`
 - Do not edit files or run implementation commands unless the user explicitly asks to continue into implementation.
 
 ## Handoff to Implementation
@@ -52,3 +63,5 @@ When handing off to `business-feature-builder`, include:
 - file responsibility hints
 - validation expectations per slice
 - unresolved questions and chosen assumptions
+- a `Codex Skill Handoff` block that can be pasted directly into the next skill request
+- if requested, a `Next Skill Request Template` that already includes the right next-skill invocation, expected inputs, work style, validation expectations, and the `codex_handoff`

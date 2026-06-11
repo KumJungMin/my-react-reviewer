@@ -42,6 +42,72 @@ $business-feature-builder로 [페이지/기능 이름]을 구현해줘.
 - [typecheck]
 ```
 
+### `codex_handoff` 기반 요청 템플릿
+
+`requirement-behavior-mapper`가 만든 `Codex Skill Handoff`를 받은 뒤에는 아래처럼 그대로 붙여서 구현 요청을 시작할 수 있습니다.
+
+````text
+$business-feature-builder로 아래 codex_handoff를 기반으로 [페이지/기능 이름]을 구현해줘.
+
+입력:
+- Figma URL: [URL 또는 없음]
+- 사용할 컴포넌트: [Button, SelectBox, Checkbox 등]
+- 대상 경로: [apps/service/src/presentation/page/...]
+
+작업 방식:
+- 먼저 codex_handoff를 요구사항, 동작 단위, 구현 slice, 커밋 경계로 해석해줘
+- 구현 전 설계와 구현 리스트를 보여주고 확인 전에는 수정하지 마
+- 페이지는 Page assembly + usePage hook + core/utils 기준으로 나눠줘
+- codex_handoff.recommended_commit_boundaries를 우선 커밋 경계로 사용해줘
+- 커밋 메시지는 `<type>: <한글 요약>` 형식으로 쓰고 본문에는 `목적`, `방향`, `검증`을 한국어로 포함해줘
+
+검증:
+- [관련 page test]
+- [typecheck]
+
+```yaml
+codex_handoff:
+  next_skill: business-feature-builder
+  status: ready_for_implementation
+  goal: "[구현 목표]"
+  scope:
+    in:
+      - "[구현 범위]"
+    out:
+      - "[제외 범위]"
+  requirements:
+    - id: R1
+      text: "[원본 요구사항]"
+  behavior_units:
+    - id: B1
+      requirements: [R1]
+      trigger: "[사용자/시스템 트리거]"
+      state: "[상태 전이]"
+      outcome: "[사용자에게 보이는 결과]"
+  implementation_slices:
+    - id: S1
+      behavior_units: [B1]
+      purpose: "[구현 목적]"
+      dependencies:
+        - "[API/usecase/state 등]"
+      validation:
+        - "[검증할 동작]"
+  assumptions:
+    confirmed:
+      - "[확정된 답변/정책]"
+    inferred: []
+  blocking_questions: []
+  recommended_commit_boundaries:
+    - id: C1
+      slices: [S1]
+      message_hint: "feat: [한글 커밋 요약]"
+      includes:
+        - "[커밋에 포함할 변경]"
+      validation:
+        - "[커밋 단위 검증]"
+```
+````
+
 ## 실제 동작
 
 1. 요구사항에서 입력, 출력, 상태, side effect, edge case를 뽑습니다.
