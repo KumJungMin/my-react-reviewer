@@ -21,13 +21,25 @@ Do not use this skill for a narrow one-skill request that does not need batching
 ## Required Flow
 
 1. Classify the request and select the minimal set of controlled skills.
-2. If the task starts from a requirement list, use `requirement-behavior-mapper` to group user behaviors, expose gaps, and propose implementation or commit slices before implementation planning.
+2. If the task starts from a requirement list, use `requirement-behavior-mapper` to produce user-friendly requirement analysis, missing/risky considerations, implementation questions/answers, and a compact `Codex Skill Handoff` when implementation will continue.
 3. Run deterministic preflight scripts before broad source reading when a relevant script exists.
-4. Produce a design and implementation list before major edits, then wait for explicit user confirmation for non-trivial work.
-5. Execute one work unit at a time under the batch and commit rules in `references/shared-work-principles.md`.
-6. Validate each work unit with the narrowest useful checks.
-7. Use `react-ai-reviewer` for final review when the task changes React behavior, hooks, page structure, design-system API, or tests.
-8. Finish with the implementation list status, commits created, validation results, and any remaining risks.
+4. When a `codex_handoff` is present, treat it as the implementation contract for downstream skills. Respect its `status`, `implementation_slices`, `blocking_questions`, and `recommended_commit_boundaries`.
+5. Produce a design and implementation list before major edits, then wait for explicit user confirmation for non-trivial work.
+6. Execute one work unit at a time under the batch and commit rules in `references/shared-work-principles.md`.
+7. Validate each work unit with the narrowest useful checks.
+8. Use `react-ai-reviewer` for final review when the task changes React behavior, hooks, page structure, design-system API, or tests.
+9. Finish with the implementation list status, commits created, validation results, and any remaining risks.
+
+## Requirement Handoff Rules
+
+Use these rules when `requirement-behavior-mapper` is part of the workflow:
+
+- If the user only asks for requirement analysis, do not include the next-skill request template unless explicitly requested.
+- If the user asks to continue into implementation, request or produce a `Codex Skill Handoff` and route it to `business-feature-builder`.
+- If `codex_handoff.status` is `needs_answers`, surface the blocking questions and ask whether to answer them or proceed with stated assumptions before editing.
+- If the user says to proceed with current assumptions, keep those assumptions visible in the implementation list.
+- If `codex_handoff.status` is `ready_for_implementation`, use `implementation_slices` and `recommended_commit_boundaries` as the default work-unit and commit plan.
+- Do not duplicate long handoff YAML in final reports unless the user asks for it; summarize the handoff status and key assumptions instead.
 
 ## Shared Principles
 
@@ -45,6 +57,7 @@ Each item must include:
 - likely files or folders
 - expected commit boundary
 - validation command or reason validation is unavailable
+- linked `codex_handoff` slice or commit boundary when available
 
 Use this shape:
 
@@ -52,6 +65,7 @@ Use this shape:
 Implementation list
 1. <work unit>: <purpose>
    Skill: <skill>
+   Handoff: <slice ids / commit boundary id, if available>
    Files: <likely paths>
    Commit: <expected commit purpose>
    Validate: <command>

@@ -138,6 +138,28 @@ $react-workflow-orchestrator로 이 기능을 구현해줘.
 - 마지막에 react-ai-reviewer로 리뷰해줘
 ```
 
+`requirement-behavior-mapper`가 만든 `codex_handoff`가 있으면 아래처럼 시작할 수 있습니다.
+
+````text
+$react-workflow-orchestrator로 아래 codex_handoff를 기준으로 구현까지 진행해줘.
+
+조건:
+- needs_answers이면 blocking_questions와 현재 가정을 먼저 보여줘
+- implementation_slices를 work unit으로 사용해줘
+- recommended_commit_boundaries를 우선 커밋 경계로 사용해줘
+- 마지막에 react-ai-reviewer로 리뷰해줘
+
+```yaml
+codex_handoff:
+  next_skill: business-feature-builder
+  status: ready_for_implementation
+  goal: "[구현 목표]"
+  implementation_slices: []
+  blocking_questions: []
+  recommended_commit_boundaries: []
+```
+````
+
 ### 제어 원칙
 
 - 비사소한 코드 변경은 먼저 설계와 구현 리스트를 제시하고 사용자 확인을 받은 뒤 편집한다

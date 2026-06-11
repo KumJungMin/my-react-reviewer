@@ -69,6 +69,8 @@ $react-workflow-orchestrator로 이 작업을 진행해줘.
 - 마지막에 react-ai-reviewer로 리뷰해줘
 ```
 
+요구사항 분석 결과로 `codex_handoff`가 있다면 함께 붙여 주세요. 마스터 스킬은 `status`, `implementation_slices`, `blocking_questions`, `recommended_commit_boundaries`를 기준으로 다음 work unit과 커밋 경계를 정합니다.
+
 작은 단일 작업은 하위 스킬을 직접 호출해도 됩니다. 그래도 비사소한 변경이면 설계 확인, 커밋 크기, 검증 조건을 요청에 포함하는 편이 좋습니다.
 
 ## 스킬별 상세 문서

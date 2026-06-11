@@ -51,35 +51,75 @@ $react-workflow-orchestrator로 [작업 이름]을 진행해줘.
 - [typecheck / test / lint / build]
 ```
 
+### `codex_handoff` 포함 요청 템플릿
+
+`requirement-behavior-mapper`가 만든 `Codex Skill Handoff`를 기반으로 구현까지 이어갈 때는 아래처럼 요청합니다.
+
+````text
+$react-workflow-orchestrator로 아래 codex_handoff를 기준으로 요구사항 분석, 구현, 검증, 최종 리뷰를 진행해줘.
+
+조건:
+- codex_handoff.status가 needs_answers이면 먼저 blocking_questions와 현재 가정을 보여줘
+- 내가 진행을 승인하면 codex_handoff.implementation_slices를 work unit으로 사용해줘
+- codex_handoff.recommended_commit_boundaries를 우선 커밋 경계로 사용해줘
+- 각 work unit의 담당 스킬을 명시해줘
+- 마지막에 react-ai-reviewer로 리뷰해줘
+
+검증:
+- [typecheck / test / lint / build]
+
+```yaml
+codex_handoff:
+  next_skill: business-feature-builder
+  status: ready_for_implementation
+  goal: "[구현 목표]"
+  implementation_slices:
+    - id: S1
+      behavior_units: [B1]
+      purpose: "[구현 목적]"
+      dependencies: []
+      validation: []
+  blocking_questions: []
+  recommended_commit_boundaries:
+    - id: C1
+      slices: [S1]
+      message_hint: "feat: [한글 커밋 요약]"
+```
+````
+
 ## 실제 동작
 
 1. 요청을 읽고 필요한 하위 스킬을 고릅니다.
-2. 요구사항 리스트에서 시작하면 `requirement-behavior-mapper`로 유저 동작, 누락 케이스, 구현/커밋 slice를 먼저 정리합니다.
-3. 가능한 경우 AST/preflight 스크립트로 먼저 후보 정보를 수집합니다.
-4. 구현 리스트를 만듭니다.
-5. 사용자가 확인하면 work unit별로 구현합니다.
-6. 각 work unit마다 좁은 검증을 실행합니다.
-7. 커밋이 필요한 경우 목적 단위로 나누고 상세 커밋 메시지를 작성합니다.
-8. 변경이 React 동작, hooks, page 구조, design-system API, 테스트에 영향을 주면 `react-ai-reviewer`로 final review를 붙입니다.
+2. 요구사항 리스트에서 시작하면 `requirement-behavior-mapper`로 유저 친화적인 요구사항 요약, 누락/위험, 구현 전 확인 및 답변, 필요 시 `Codex Skill Handoff`를 먼저 정리합니다.
+3. `codex_handoff`가 있으면 status, implementation_slices, blocking_questions, recommended_commit_boundaries를 구현 계약으로 사용합니다.
+4. 가능한 경우 AST/preflight 스크립트로 먼저 후보 정보를 수집합니다.
+5. 구현 리스트를 만듭니다.
+6. 사용자가 확인하면 work unit별로 구현합니다.
+7. 각 work unit마다 좁은 검증을 실행합니다.
+8. 커밋이 필요한 경우 목적 단위로 나누고 상세 커밋 메시지를 작성합니다.
+9. 변경이 React 동작, hooks, page 구조, design-system API, 테스트에 영향을 주면 `react-ai-reviewer`로 final review를 붙입니다.
 
 ## 구현 리스트 예시
 
 ```text
 Implementation list
-1. Requirement mapping: 요구사항을 사용자 행동, 누락 케이스, 구현 slice로 정리합니다.
+1. Requirement mapping: 요구사항을 사용자 행동, 누락 케이스, 구현 전 확인 및 답변으로 정리합니다.
    Skill: requirement-behavior-mapper
+   Handoff: optional codex_handoff
    Files: none
    Commit: none
-   Validate: mapping coverage check
+   Validate: requirement coverage check
 
-2. Feature skeleton: 요구사항을 page, hook, core 함수 시그니처로 나눕니다.
+2. Feature skeleton: codex_handoff의 구현 slice를 page, hook, core 함수 시그니처로 나눕니다.
    Skill: business-feature-builder
+   Handoff: S1 / C1
    Files: apps/service/src/presentation/page/examplePage/**
    Commit: Add example page skeleton
    Validate: typecheck
 
 3. UI sections: 큰 JSX 영역을 semantic section component로 분리합니다.
    Skill: business-feature-builder
+   Handoff: S2 / C2
    Files: apps/service/src/presentation/page/examplePage/components/**
    Commit: Extract example page sections
    Validate: page test
